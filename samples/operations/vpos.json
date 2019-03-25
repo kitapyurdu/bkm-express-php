@@ -1,0 +1,227 @@
+{
+  "0010": {
+    "vposUserId": "bkmtest",
+    "vposPassword": "TEST1691",
+    "extra": {
+      "ClientId": "190001691",
+      "storekey": "TRPS1691",
+      "orderId": "9073194"
+    },
+    "bankIndicator": "0010",
+    "serviceUrl": "http://srvirt01:7200/ziraat",
+    "preAuth": false
+  },
+  "0012": {
+    "vposUserId": "testapi",
+    "vposPassword": "TEST1234",
+    "extra": {
+      "ClientId": "500020009",
+      "storekey": "Ab123456",
+      "subMerchantName": "MERCHANT-1-AK"
+    },
+    "bankIndicator": "0012",
+    "serviceUrl": "http://srvirt01:7200/halkbank",
+    "preAuth": false
+  },
+  "0015": {
+    "vposUserId": "000000000011429",
+    "vposPassword": "BKMexpress",
+    "extra": {
+      "posno": "vp000263",
+      "uyeno": "000000000011429",
+      "islemyeri": "I",
+      "uyeref": "917250515"
+    },
+    "bankIndicator": "0015",
+    "serviceUrl": "http://srvirt01:7200/vpos724v3/",
+    "preAuth": false
+  },
+  "0032": {
+    "vposUserId": "bkmapi",
+    "vposPassword": "KUTU8520",
+    "extra": {
+      "ClientId": "401562930",
+      "storekey": "KUTU8520"
+    },
+    "bankIndicator": "0032",
+    "serviceUrl": "http://srvirt01:7200/teb",
+    "preAuth": false
+  },
+  "0046": {
+    "vposUserId": "akapi",
+    "vposPassword": "TEST1234",
+    "extra": {
+      "ClientId": "100111222",
+      "storekey": "TEST1234",
+      "subMerchantName": "MERCHANT-1-AK"
+    },
+    "bankIndicator": "0046",
+    "serviceUrl": "http://srvirt01:7200/akbank",
+    "preAuth": false
+  },
+  "0059": {
+    "vposUserId": "7000679",
+    "vposPassword": "123qweASD",
+    "extra": {
+      "terminalprovuserid": "PROVAUT",
+      "terminalmerchantid": "7000679",
+      "storekey": "12345678",
+      "terminalid": "30691297"
+    },
+    "bankIndicator": "0059",
+    "serviceUrl": "http://srvirt01:7200/VPServlet",
+    "preAuth": false
+  },
+  "0062": {
+    "vposUserId": "7000679",
+    "vposPassword": "123qweASD",
+    "extra": {
+      "terminalprovuserid": "PROVAUT",
+      "terminalmerchantid": "7000679",
+      "storekey": "12345678",
+      "terminalid": "30691297"
+    },
+    "bankIndicator": "0062",
+    "serviceUrl": "http://srvirt01:7200/VPServlet",
+    "preAuth": true
+  },
+  "0064": {
+    "vposUserId": "bkmapi",
+    "vposPassword": "KUTU8900",
+    "extra": {
+      "ClientId": "700655047520",
+      "storekey": "TEST123456",
+      "subMerchantName": "MERCHANT-1-AK"
+    },
+    "bankIndicator": "0064",
+    "serviceUrl": "http://srvirt01:7200/isbank",
+    "preAuth": false
+  },
+  "0067": {
+    "vposUserId": "bkm3d1",
+    "vposPassword": "12345",
+    "extra": {
+      "mid": "6706598320",
+      "tid": "67245089",
+      "posnetID": "4280"
+    },
+    "bankIndicator": "0067",
+    "serviceUrl": "http://srvirt01:7200/PosnetWebService/XML",
+    "preAuth": false
+  },
+  "0099": {
+    "vposUserId": "7000679",
+    "vposPassword": "123qweASD",
+    "extra": {
+      "terminalprovuserid": "PROVAUT",
+      "terminalmerchantid": "7000679",
+      "storekey": "12345678",
+      "terminalid": "30691297"
+    },
+    "bankIndicator": "0099",
+    "serviceUrl": "http://srvirt01:7200/VPServlet",
+    "preAuth": false
+  },
+  "0111": {
+    "vposUserId": "bkmapi",
+    "vposPassword": "TEST1234",
+    "extra": {
+      "ClientId": "600000120",
+      "storekey": "TEST1234",
+      "subMerchantName": "MERCHANT-NAME-FINANS",
+      "subMerchantId": "MERCHANT-ID",
+      "subMerchantPostalCode": "34000",
+      "subMerchantCity": "MERCHANT-CITY",
+      "subMerchantCountry": "MERCHANT-COUNTRY"
+    },
+    "bankIndicator": "0111",
+    "serviceUrl": "http://srvirt01:7200/finans",
+    "preAuth": false
+  },
+  "0123": {
+    "vposUserId": "a",
+    "vposPassword": "TEST1234",
+    "extra": {
+      "ClientId": "0004220"
+    },
+    "bankIndicator": "0123",
+    "serviceUrl": "https://vpostest.advantage.com.tr/servlet/cc5ApiServer",
+    "preAuth": false
+  },
+  "0134": {
+    "vposUserId": "1",
+    "vposPassword": "12345",
+    "extra": {
+      "ShopCode": "3123",
+      "UserCode": "InterTestApi",
+      "UserPass": "3",
+      "storeKey": "gDg1N"
+    },
+    "bankIndicator": "0134",
+    "serviceUrl": "http://srvirt01:7200/mpi/Default.aspx",
+    "preAuth": false
+  },
+  "0146": {
+    "vposUserId": "7000679",
+    "vposPassword": "123qweASD",
+    "extra": {
+      "terminalprovuserid": "PROVAUT",
+      "terminalmerchantid": "7000679",
+      "storekey": "12345678",
+      "terminalid": "30691297"
+    },
+    "bankIndicator": "0146",
+    "serviceUrl": "http://srvirt01:7200/VPServlet",
+    "preAuth": false
+  },
+  "0203": {
+    "vposUserId": "7000679",
+    "vposPassword": "123qweASD",
+    "extra": {
+      "terminalprovuserid": "PROVAUT",
+      "terminalmerchantid": "7000679",
+      "storekey": "12345678",
+      "terminalid": "30691297"
+    },
+    "bankIndicator": "0203",
+    "serviceUrl": "http://srvirt01:7200/VPServlet",
+    "preAuth": false
+  },
+  "0205": {
+    "vposUserId": "apiuser",
+    "vposPassword": "Api123",
+    "extra": {
+      "MerchantId": "2",
+      "CustomerId": "8736633",
+      "orderId": "852507088"
+    },
+    "bankIndicator": "0205",
+    "serviceUrl": "https://boatest.kuveytturk.com.tr/boa.virtualpos.services/Home/ThreeDModelGate",
+    "preAuth": false
+  },
+  "0206": {
+    "vposUserId": "",
+    "vposPassword": "",
+    "extra": {
+      "orgNo": "006",
+      "firmNo": "9470335",
+      "termNo": "955434",
+      "merchantKey": "HngvXM22",
+      "orderId": "674451441"
+    },
+    "bankIndicator": "0206",
+    "serviceUrl": "https://testserver1:15443/BKMExpressServices.asmx",
+    "preAuth": false
+  },
+  "0208": {
+    "vposUserId": "",
+    "vposPassword": "",
+    "extra": {
+      "MerchantId": "006100200140200",
+      "MerchantPassword": "12345678"
+    },
+    "bankIndicator": "208",
+    "serviceUrl": "http://srvirt01:7200/iposnet/sposnet.aspx",
+    "preAuth": false
+  }
+}

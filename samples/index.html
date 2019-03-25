@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bex Payment Samples</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="BexUtil.js">
+
+    </script>
+    <script>
+
+        // Purchase Complete
+        function onComplete(params, status) {
+            if ("success" === status) {
+                BexUtil
+                    .queryTicket("operations/status.php", params)
+                    .then(function (response) {
+                        $("#payment_result .modal-body").html("<div> Ödemeniz başarıyla tamamlandı ! Sipariş Numaranız : " + response.orderId);
+                        $("#payment_result").modal({
+                            show: true
+                        });
+                    });
+
+            }
+        }
+
+        function onCancel() {
+
+        }
+
+        function getModalOptions(container, skipButton, params) {
+            return {
+                container: container,
+                buttonSize: [],
+                skipButton: skipButton,
+                onComplete: onComplete.bind(this, params),
+                onCancel: onCancel
+            };
+        }
+
+        function openModal(params, container, skipButton) {
+            document.getElementById(container).innerHTML = "";
+            BexUtil.showModal("operations/ticket.php", params,
+                getModalOptions(container, skipButton, params));
+        }
+
+        function generateOrderId() {
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            }
+
+            return s4() + s4() + s4() + s4() +
+                s4() + s4() + s4() + s4();
+        }
+
+
+        /**
+         * Open Modal for Simple Payment
+         */
+        function openPaymentModal() {
+            openModal({
+                type: "simple_payment",
+                orderId: generateOrderId(),
+                amount: "1000,5"
+            }, "bex-payment-modal", true);
+        }
+        /**
+         * Create BKM button for Simple Payment
+         */
+        function openPaymentButton() {
+            openModal({
+                type: "simple_payment",
+                orderId: generateOrderId(),
+                amount: "1000,5"
+            }, "bex-payment-modal", false);
+        }
+
+        /**
+         * Open Modal for Payment with Installment
+         */
+        function openPaymentModalWithInstallment() {
+            openModal({
+                type: "payment_with_installment",
+                orderId: generateOrderId(),
+                amount: "1000,5"
+            }, "bex-payment-modal", true);
+        }
+        /**
+         * Create BKM button for Payment with Installment
+         */
+        function openPaymentButtonWithInstallment() {
+            openModal({
+                type: "payment_with_installment",
+                orderId: generateOrderId(),
+                amount: "1000,5"
+            }, "bex-payment-modal", false);
+        }
+
+        /**
+         * Open Modal for Payment with Address
+         */
+        function openPaymentModalWithAddress() {
+            openModal({
+                type: "payment_with_address",
+                orderId: generateOrderId(),
+                amount: "1000,5"
+            }, "bex-payment-modal", true);
+        }
+        /**
+         * Create BKM button for Payment with Address
+         */
+        function openPaymentButtonWithAddress() {
+            openModal({
+                type: "payment_with_address",
+                orderId: generateOrderId(),
+                amount: "1000,5"
+            }, "bex-payment-modal", false);
+        }
+
+
+    </script>
+</head>
+<body>
+<div class="container">
+    <h2>Ödeme örnekleri</h2>
+    <h4>Payment Samples</h4>
+    <ul class="list-group">
+
+        <li class="list-group-item">
+            <a href="#" data-toggle="collapse" data-target="#bex_payment"><h4>Ödeme Alma işlemi</h4></a>
+            <br/>
+            <div class="collapse panel panel-default" id="bex_payment">
+                <div class="panel-heading">Ödeme Sayfası</div>
+                <div class="panel-body">
+                    <button class="btn btn-primary" onclick="openPaymentModal()">Ödeme Al</button>
+                    <button class="btn btn-primary" onclick="openPaymentButton()">BKM Button Kullanarak Ödeme Al
+                    </button>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <a href="#" data-toggle="collapse" data-target="#bex_payment_with_installment"><h4>Taksitli Ödeme Alma
+                işlemi</h4></a>
+            <br/>
+            <div class="collapse panel panel-default" id="bex_payment_with_installment">
+                <div class="panel-heading">Ödeme Sayfası</div>
+                <div class="panel-body">
+                    <button class="btn btn-primary" onclick="openPaymentModalWithInstallment()">Ödeme Al</button>
+                    <button class="btn btn-primary" onclick="openPaymentButtonWithInstallment()">BKM Button Kullanarak
+                        Ödeme Al
+                    </button>
+                </div>
+            </div>
+        </li>
+
+
+        <li class="list-group-item">
+            <a href="#" data-toggle="collapse" data-target="#bex_payment_with_address"><h4>Adres ile Ödeme Alma
+                işlemi</h4></a>
+            <br/>
+            <div class="collapse panel panel-default" id="bex_payment_with_address">
+                <div class="panel-heading">Ödeme Sayfası</div>
+                <div class="panel-body">
+                    <button class="btn btn-primary" onclick="openPaymentModalWithAddress()">Ödeme Al</button>
+                    <button class="btn btn-primary" onclick="openPaymentButtonWithAddress()">BKM Button Kullanarak Ödeme
+                        Al
+                    </button>
+                </div>
+            </div>
+        </li>
+        <li style="position: relative" id="bex-payment-modal" class="list-group-item">
+
+        </li>
+    </ul>
+
+    <!-- Modal -->
+    <div class="modal fade" id="payment_result" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Bilgilendirme</h4>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
