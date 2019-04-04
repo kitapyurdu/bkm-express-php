@@ -345,7 +345,9 @@ class MerchantService
                     array_key_exists('error', $bodyData['data']) ? $bodyData['data']['error'] : null
                 );
             }
-        } catch (HttpRequestException $exception) {
+        } catch (ClientException $exception) {
+            throw new MerchantServiceException($exception->getMessage());
+        } catch (ServerException $exception) {
             throw new MerchantServiceException($exception->getMessage());
         }
     }
