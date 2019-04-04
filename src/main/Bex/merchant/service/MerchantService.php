@@ -14,6 +14,7 @@ use Bex\merchant\response\TicketResponse;
 use Bex\merchant\security\EncryptionUtil;
 use Bex\merchant\token\Token;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use HttpRequestException;
 
@@ -53,6 +54,8 @@ class MerchantService
 
                 return new MerchantLoginResponse($bodyData['code'], $bodyData['call'], $bodyData['description'], $bodyData['message'], $bodyData['result'], $bodyData['parameters'], $bodyData['data']['id'], $bodyData['data']['path'], $bodyData['data']['token']);
             }
+        } catch (ClientException $exception) {
+            throw new MerchantServiceException($exception->getMessage());
         } catch (ServerException $exception) {
             throw new MerchantServiceException('Merchant login got connection problem.');
         }
@@ -134,7 +137,9 @@ class MerchantService
 
                 return new TicketResponse($bodyData['code'], $bodyData['call'], $bodyData['description'], $bodyData['message'], $bodyData['result'], $bodyData['parameters'], $bodyData['data']['id'], $bodyData['data']['path'], $bodyData['data']['token']);
             }
-        } catch (HttpRequestException $exception) {
+        } catch (ClientException $exception) {
+            throw new MerchantServiceException($exception->getMessage());
+        } catch (ServerException $exception) {
             throw new MerchantServiceException('Ticket generation got connection problem.');
         }
     }

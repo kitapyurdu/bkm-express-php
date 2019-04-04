@@ -13,6 +13,10 @@ class EncryptionUtil
         $result = openssl_sign($data, $signature, self::getPrivateKeyFromString($privateKey), 'sha256WithRSAEncryption');
 
         if (!$result) {
+            $result = openssl_sign($data, $signature, self::getPrivateKeyFromString($privateKey), 'SHA256');
+        }
+
+        if (!$result) {
             throw new EncryptionException('Sign error');
         }
 
@@ -32,17 +36,19 @@ class EncryptionUtil
 
     private static function formatKey($unformattedKey, $keyType)
     {
-        $result = '';
+        $result = $unformattedKey;
         $lineCharacter = 0;
 
-        if ('public' == $keyType) {
-            $lineCharacter = 64;
-            $result = wordwrap($unformattedKey, $lineCharacter, "\n", true);
-            $result = "-----BEGIN PUBLIC KEY-----\n".$result."\n-----END PUBLIC KEY-----";
-        } else {
-            $lineCharacter = 65;
-            $result = wordwrap($unformattedKey, $lineCharacter, "\n", true);
-            $result = "-----BEGIN RSA PRIVATE KEY-----\n".$result."\n-----END RSA PRIVATE KEY-----";
+        if (substr($unformattedKey, 0, 5) !== '-----') {
+            if ('public' == $keyType) {
+                $lineCharacter = 64;
+                $result = wordwrap($unformattedKey, $lineCharacter, "\n", true);
+                $result = "-----BEGIN PUBLIC KEY-----\n".$result."\n-----END PUBLIC KEY-----";
+            } else {
+                $lineCharacter = 65;
+                $result = wordwrap($unformattedKey, $lineCharacter, "\n", true);
+                $result = "-----BEGIN RSA PRIVATE KEY-----\n".$result."\n-----END RSA PRIVATE KEY-----";
+            }
         }
 
         return $result;

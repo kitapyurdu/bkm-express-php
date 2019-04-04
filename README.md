@@ -46,6 +46,8 @@ değerlerini ekleyebilirsiniz. İlerleyen zamanlarda sürüm numarası ile kulla
 
 *Not2:* Eğer diğer bağımlılıkların update olmamasını, sadece bkm-express-php bağımlılığının yüklenmesini istiyorsanız:  `composer update kitapyurdu/bkm-express-php` 
 
+#### Samples
+
 #### Configure
 
 
