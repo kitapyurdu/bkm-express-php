@@ -58,6 +58,10 @@ class EncryptionUtil
     {
         $result = openssl_verify($ticketId, base64_decode($signature), self::getPublicKeyFromString(self::FORMATTED_PUBLIC_KEY), 'sha256WithRSAEncryption');
 
+        if (!$result) {
+            $result = openssl_verify($ticketId, base64_decode($signature), self::getPublicKeyFromString(self::FORMATTED_PUBLIC_KEY), 'SHA256');
+        }
+
         if (1 == $result) {
             return true;
         } elseif (0 == $result) {

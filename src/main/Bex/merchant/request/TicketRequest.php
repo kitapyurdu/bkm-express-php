@@ -107,9 +107,9 @@ class TicketRequest
     }
 
     /**
-     * @param mixed $tckn
+     * @param array $tckn
      */
-    public function setTckn($tckn)
+    public function setTckn(array $tckn)
     {
         if (null == $tckn) {
             return $this;
