@@ -29,7 +29,7 @@
             data: JSON.stringify(params)
         }).then(function (response) {
             /**
-             * {"amount":"1000,5","error":false,"status":"SUCCESS","message":"\u00d6deme tamamland\u0131","detail":null}
+             * {"amount":"1000","error":false,"status":"SUCCESS","message":"\u00d6deme tamamland\u0131","detail":null}
              */
             if (response.status !== "SUCCESS") {
                 throw new Error("İşlem hatası !")

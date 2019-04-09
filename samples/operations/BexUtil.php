@@ -1,13 +1,10 @@
 <?php
 
-require_once "../../src/main/Bex/Bex.php";
-
 use Bex\merchant\security\EncryptionUtil;
 use Bex\util\MoneyUtils;
 
 class BexUtil
 {
-
     public static function readJsonFile($jsonFile)
     {
         return json_decode(file_get_contents($jsonFile), true);
@@ -32,13 +29,12 @@ class BexUtil
     {
         $vposConfigs = json_decode(file_get_contents($vposJsonFile), true);
         $vposConfig = $vposConfigs[$bank];
-        if ($vposConfig == null) {
+        if (null == $vposConfig) {
             throw new Exception("$bank not found in $vposJsonFile vpos configuration file");
         }
+
         return EncryptionUtil::encryptWithBex(json_encode($vposConfig));
     }
 }
 
-$util = new BexUtil($configurations);
-
-?>
+$util = new BexUtil();

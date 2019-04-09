@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="BexUtil.js">
+    <script src="samples/BexUtil.js">
 
     </script>
     <script>
@@ -16,7 +16,7 @@
         function onComplete(params, status) {
             if ("success" === status) {
                 BexUtil
-                    .queryTicket("operations/status.php", params)
+                    .queryTicket("samples/operations/status.php", params)
                     .then(function (response) {
                         $("#payment_result .modal-body").html("<div> Ödemeniz başarıyla tamamlandı ! Sipariş Numaranız : " + response.orderId);
                         $("#payment_result").modal({
@@ -43,7 +43,7 @@
 
         function openModal(params, container, skipButton) {
             document.getElementById(container).innerHTML = "";
-            BexUtil.showModal("operations/ticket.php", params,
+            BexUtil.showModal("samples/operations/ticket.php", params,
                 getModalOptions(container, skipButton, params));
         }
 
@@ -66,7 +66,7 @@
             openModal({
                 type: "simple_payment",
                 orderId: generateOrderId(),
-                amount: "1000,5"
+                amount: "1000"
             }, "bex-payment-modal", true);
         }
         /**
@@ -76,7 +76,7 @@
             openModal({
                 type: "simple_payment",
                 orderId: generateOrderId(),
-                amount: "1000,5"
+                amount: "1000"
             }, "bex-payment-modal", false);
         }
 
@@ -87,7 +87,7 @@
             openModal({
                 type: "payment_with_installment",
                 orderId: generateOrderId(),
-                amount: "1000,5"
+                amount: "1000"
             }, "bex-payment-modal", true);
         }
         /**
@@ -97,7 +97,7 @@
             openModal({
                 type: "payment_with_installment",
                 orderId: generateOrderId(),
-                amount: "1000,5"
+                amount: "1000"
             }, "bex-payment-modal", false);
         }
 
@@ -108,7 +108,7 @@
             openModal({
                 type: "payment_with_address",
                 orderId: generateOrderId(),
-                amount: "1000,5"
+                amount: "1000"
             }, "bex-payment-modal", true);
         }
         /**
@@ -118,7 +118,7 @@
             openModal({
                 type: "payment_with_address",
                 orderId: generateOrderId(),
-                amount: "1000,5"
+                amount: "1000"
             }, "bex-payment-modal", false);
         }
 

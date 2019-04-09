@@ -1,18 +1,16 @@
 <?php
 
-require_once "./setup.php";
-require_once "./BexUtil.php";
+require_once './setup.php';
+require_once './BexUtil.php';
 
-$userData = BexUtil::readJsonFile("./data.json");
+$userData = BexUtil::readJsonFile('./data.json');
 
 $bex->installments(function ($installmentArray) {
-
     $installments = array();
 
-    $totalAmountStr = $installmentArray["totalAmount"];
+    $totalAmountStr = $installmentArray['totalAmount'];
 
-
-    $posConfig = BexUtil::vposConfig("vpos.json", $installmentArray['bank']);
+    $posConfig = BexUtil::vposConfig('vpos.json', $installmentArray['bank']);
 
     // iki taksit yapalım
     $installmentAmount = BexUtil::formatTurkishLira(
@@ -23,7 +21,7 @@ $bex->installments(function ($installmentArray) {
         'numberOfInstallment' => 1,
         'installmentAmount' => $installmentAmount,
         'totalAmount' => $totalAmountStr,
-        'vposConfig' => $posConfig
+        'vposConfig' => $posConfig,
     ));
 
     // iki taksit yapalım
@@ -36,10 +34,8 @@ $bex->installments(function ($installmentArray) {
         'numberOfInstallment' => 2,
         'installmentAmount' => $installmentAmount,
         'totalAmount' => $totalAmountStr,
-        'vposConfig' => $posConfig
+        'vposConfig' => $posConfig,
     ));
     // Taksitleri bir array olarak dönelim.
     return $installments;
 });
-
-?>

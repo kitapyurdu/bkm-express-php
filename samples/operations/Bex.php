@@ -1,11 +1,5 @@
 <?php
 
-
-require_once "../../src/main/Bex/Bex.php";
-//VERILMIS OLAN SDK YI ZIP FORMATINDAN CIKARTIP PROJEMIZE EKLIYORUZ.
-//SDKNIN PROJEYE YUKLENMESI
-//DIKKAT EDILMESI GEREKEN SDK NIN PATHININ DOGRU VERILMESI.
-
 use Bex\config\BexPayment;
 use Bex\exceptions\BexException;
 use Bex\exceptions\ConfigurationException;
@@ -23,6 +17,7 @@ function getValue($array, $key)
     if (array_key_exists($key, $array)) {
         return $array[$key];
     }
+
     return null;
 }
 
@@ -30,6 +25,7 @@ class Bex
 {
     private $config;
     private $isLoggedIn = false;
+    /** @var MerchantService */
     private $merchantService;
     private $merchantLoginResponse;
 
@@ -49,6 +45,7 @@ class Bex
         if (!isset($merchantPrivateKey)) {
             throw new ConfigurationException("BKM Express Ayar dosyasında privateKey değeri bulunamadı ! Ipucu:  'DEV', 'LOCAL', 'SANDBOX', 'PRODUCTION' değerlerinden biri olmalıdır !");
         }
+
         return BexPayment::startBexPayment($environment, $merchantId, $merchantPrivateKey);
     }
 
@@ -56,6 +53,8 @@ class Bex
      * @param $environment
      * @param $merchantId
      * @param $merchantPrivateKey
+     *
+     * @return Bex
      */
     public static function configure($environment, $merchantId, $merchantPrivateKey)
     {
@@ -70,19 +69,23 @@ class Bex
             $ticketResult['path'],
             $ticketResult['token']
         );
+
         return array(
-            "id" => $ticketRefresh->getId(),
-            "path" => $ticketRefresh->getPath(),
-            "token" => $ticketRefresh->getToken()
+            'id' => $ticketRefresh->getId(),
+            'path' => $ticketRefresh->getPath(),
+            'token' => $ticketRefresh->getToken(),
         );
     }
 
     /**
-     * {
+     * {.
      *
      * }
+     *
      * @param $ticketArray
+     *
      * @return array
+     *
      * @throws Exception
      */
     public function createTicket($ticketArray)
@@ -90,13 +93,13 @@ class Bex
         $this->login();
         $amount = $ticketArray['amount'];
         if (empty($amount)) {
-            throw new Exception("Toplam tutar zorunludur !");
+            throw new Exception('Toplam tutar zorunludur !');
         }
         $nonceUrl = $ticketArray['nonceUrl'];
         if (empty($nonceUrl)) {
-            throw new Exception("Nonce URL zorunludur !");
+            throw new Exception('Nonce URL zorunludur !');
         }
-        $builder = new Builder("payment");
+        $builder = new Builder('payment');
         $builder->setAmount($ticketArray['amount']);
         $builder->setInstallmentUrl(getValue($ticketArray, 'installmentUrl'));
         $builder->setNonceUrl(getValue($ticketArray, 'nonceUrl'));
@@ -113,9 +116,9 @@ class Bex
         );
 
         return array(
-            "id" => $ticketResponse->getTicketShortId(),
-            "path" => $ticketResponse->getTicketPath(),
-            "token" => $ticketResponse->getTicketToken()
+            'id' => $ticketResponse->getTicketShortId(),
+            'path' => $ticketResponse->getTicketPath(),
+            'token' => $ticketResponse->getTicketToken(),
         );
     }
 
@@ -137,10 +140,10 @@ class Bex
         //DONEN RESPONSE UMUZ APPLICATION/JSON FORMATINDA OLMALIDIR.
         header('Content-type: application/json');
         // REQUEST DATASINI ALDIGIMIZ YER
-        $data = json_decode(file_get_contents('php://input'), TRUE);
+        $data = json_decode(file_get_contents('php://input'), true);
         $installmentResponse = new InstallmentsResponse();
         if (empty($data)) {
-            throw new BexException("Request body can not get !");
+            throw new BexException('Request body can not get !');
         }
         //GELEN REQUEST DATASI ILE OBJEMIZI OLUSTRUYORUZ.
         $installmentRequest = new InstallmentRequest($data['bin'], $data['totalAmount'], $data['ticketId'], $data['signature']);
@@ -152,31 +155,31 @@ class Bex
         )
         ) {
             // SIGN ERROR
-            exit(json_encode(array("data" => null, 'status' => "fail", 'error' => 'Signature verification failed.')));
+            exit(json_encode(array('data' => null, 'status' => 'fail', 'error' => 'Signature verification failed.')));
         }
         try {
             //REQUESTTEN GELEN BIN IN 0. ELEMENTINDE BIN AND BANK I DEGERE ATIYORUZ.
             $binAndBank = $installmentRequest->getBinNo()[0];
             //BANKA KODUNU EXPLODEDARR E ATIYORUZ.
-            $explodedArr = explode("@", $binAndBank);
+            $explodedArr = explode('@', $binAndBank);
             // get installments
             $installments = $callback(array(
-                "ticketId" => $installmentRequest->getTicketId(),
-                "totalAmount" => $installmentRequest->getTotalAmount(),
-                "bin" => $explodedArr[0],
-                "bank" => $explodedArr[1]
+                'ticketId' => $installmentRequest->getTicketId(),
+                'totalAmount' => $installmentRequest->getTotalAmount(),
+                'bin' => $explodedArr[0],
+                'bank' => $explodedArr[1],
             ));
             //DONECEGIMIZ GENEL RESPONSE TIPI
             $binAndInstallments = new BinAndInstallments();
             $installmentResponse->setInstallments($installments);
-            $installmentResponse->setStatus("ok");
+            $installmentResponse->setStatus('ok');
             $installmentResponse->setBin($explodedArr[0]);
             $returnArray = array();
             $returnArray[$installmentResponse->getBin()] = $installmentResponse->getInstallments();
             $binAndInstallments->setInstallments($returnArray);
-            exit(json_encode(array("data" => $binAndInstallments, 'status' => "ok", 'error' => '')));
+            exit(json_encode(array('data' => $binAndInstallments, 'status' => 'ok', 'error' => '')));
         } catch (\Exception $exception) {
-            exit(json_encode(array("data" => null, 'status' => "fail", 'error' => $exception->getMessage())));
+            exit(json_encode(array('data' => null, 'status' => 'fail', 'error' => $exception->getMessage())));
         }
     }
 
@@ -185,7 +188,7 @@ class Bex
         $this->login();
         //NULL CHECK
         $data = $this->takeDataAndRespond();
-        if ($data != null) { // Data is ok.
+        if (null != $data) { // Data is ok.
             //ILK RESPONSE U DONDUKDEN SONRA MICRO SERVIS  2. RESPONSU DONECEGIZ.
             //NONCE RESPONSE ORNEGI
             $merchantNonceResponse = new MerchantNonceResponse();
@@ -198,11 +201,11 @@ class Bex
             //BASARILI RESPONSE ORNEGI
             //SIGNATURE KONTROLUNDE TICKET ID OLARAK NONCE REQUESTTEN GELEN TICKET ID ILE KONTROL ETMEK GEREKMEKTEDIR
             //KONTROL EDILECEK OLAN SIGNATURE DA NONCE DAN GELMEKTEDIR.
-            if (EncryptionUtil::verifyBexSign($data["id"], $data["signature"])) {
+            if (EncryptionUtil::verifyBexSign($data['id'], $data['signature'])) {
                 //DONULMESI GEREKEN RESPONSE'UN KOD ORNEGI.
                 $merchantNonceResponse->setResult($callback($data));
-                $merchantNonceResponse->setNonce($data["token"]);
-                $merchantNonceResponse->setId($data["path"]);
+                $merchantNonceResponse->setNonce($data['token']);
+                $merchantNonceResponse->setId($data['path']);
                 //NONCE RESPONSU SETLEDIKDEN SONRA MERCHANT SERVICE DEN SENDNONCERESPONCE SERVISINI CAGIRIYORUZ.
                 //PARAMETRELER SIRASIYLA
                 //1-)SETLEDIGIMIZ RESPONSE SINIFI
@@ -213,23 +216,24 @@ class Bex
                 return $this->merchantService->sendNonceResponse(
                     $merchantNonceResponse,
                     $this->merchantLoginResponse->getPath(),
-                    $data["path"],
+                    $data['path'],
                     $this->merchantLoginResponse->getConnectionToken(),
-                    $data["token"]
+                    $data['token']
                 );
             } else {
                 //BASARISIZ RESPONSE ORNEGI
                 //BURADA RESULT FALSE OLARAK SETLENIR VE MESSAGE SETLENIR.
                 $merchantNonceResponse->setResult(false);
-                $merchantNonceResponse->setNonce($data["token"]);
-                $merchantNonceResponse->setId($data["path"]);
-                $merchantNonceResponse->setMessage("Signature verification failed");
+                $merchantNonceResponse->setNonce($data['token']);
+                $merchantNonceResponse->setId($data['path']);
+                $merchantNonceResponse->setMessage('Signature verification failed');
+
                 return $this->merchantService->sendNonceResponse(
                     $merchantNonceResponse,
                     $this->merchantLoginResponse->getPath(),
-                    $data["path"],
+                    $data['path'],
                     $this->merchantLoginResponse->getConnectionToken(),
-                    $data["token"]
+                    $data['token']
                 );
             }
         }
@@ -241,25 +245,25 @@ class Bex
     protected function takeDataAndRespond()
     {
         //ISTEKDEN GELEN REQUESTI ALIYORUZ.
-        $data = json_decode(file_get_contents('php://input'), TRUE);
+        $data = json_decode(file_get_contents('php://input'), true);
         //NULL CHECK
-        if ($data != null) {
+        if (null != $data) {
             //DONULMESI GEREKEN RESPONSE ORNEGI JSON FORMATINDA OLMALIDIR.
             header('Content-type: application/json');
             // NONCE ILK RESPONSE
             //ILK RESPONSE UN FORMATINA DIKKAT EDILMELIDIR.
             ob_start();
             echo json_encode(array(
-                "result" => "ok",
-                "data" => "ok"
+                'result' => 'ok',
+                'data' => 'ok',
             ));
             $size = ob_get_length();
             // Disable compression (in case content length is compressed).
-            header("Content-Encoding: none");
-            header($_SERVER["SERVER_PROTOCOL"] . " 202 Accepted");
-            header("Status: 202 Accepted");
+            header('Content-Encoding: none');
+            header($_SERVER['SERVER_PROTOCOL'].' 202 Accepted');
+            header('Status: 202 Accepted');
             header("Content-Length: {$size}");
-            header("Connection: close");
+            header('Connection: close');
             ignore_user_abort(true);
             set_time_limit(0);
             ob_end_flush();
@@ -273,8 +277,10 @@ class Bex
                 session_write_close();
                 fastcgi_finish_request();
             }
+
             return $data;
         }
+
         return null;
     }
 
@@ -293,5 +299,3 @@ class Bex
         return $this->config->getBexApiConfiguration()->getBaseUrl();
     }
 }
-
-?>

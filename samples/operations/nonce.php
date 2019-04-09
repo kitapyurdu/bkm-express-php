@@ -1,9 +1,9 @@
 <?php
 
-require_once "./setup.php";
-require_once "./BexUtil.php";
+require_once './setup.php';
+require_once './BexUtil.php';
 
-$filename = "./data.json";
+$filename = './data.json';
 $table = BexUtil::readJsonFile($filename);
 
 /**
@@ -17,8 +17,8 @@ $table = BexUtil::readJsonFile($filename);
  * "reply": {
  * "ticketId": "9c50d4fe-719c-4e23-924c-baaa9cc85531",
  * "orderId": "7282e6e1e5c94c45aba22f83851b36dd",
- * "totalAmount": "1000,5",
- * "totalAmountWithInstallmentCharge": "1000,5",
+ * "totalAmount": "1000",
+ * "totalAmountWithInstallmentCharge": "1000",
  * "numberOfInstallments": 1,
  * "hash": "16UEX3PJWWGJ+6IFTSVSO60EN38ZATL4FEW3YMLX2OK=",
  * "deliveryAddress": {
@@ -50,11 +50,10 @@ $table = BexUtil::readJsonFile($filename);
  * "email": "zeynep@bkm.com"
  * }
  * }
- * }
+ * }.
+ *
  * @param $data
  */
-
-
 $orderId = null;
 
 function writeDb($orderId, $status, $message, $error = false, $detail = null)
@@ -65,10 +64,10 @@ function writeDb($orderId, $status, $message, $error = false, $detail = null)
     if (!$orderData) {
         throw new Exception("Order not found by $orderId orderId");
     }
-    $orderData["status"] = $status;
-    $orderData["message"] = $message;
-    $orderData["error"] = $error;
-    $orderData["detail"] = $detail;
+    $orderData['status'] = $status;
+    $orderData['message'] = $message;
+    $orderData['error'] = $error;
+    $orderData['detail'] = $detail;
     $table[$orderId] = $orderData;
     BexUtil::writeJsonFile($filename, $table);
 }
@@ -76,31 +75,32 @@ function writeDb($orderId, $status, $message, $error = false, $detail = null)
 try {
     $nonceResult = $bex->approve(function ($data) {
         global $orderId;
-        $orderId = $data["reply"]["orderId"];
+        $orderId = $data['reply']['orderId'];
         global $table;
         global $filename;
         $orderData = $table[$orderId];
         // $orderData["orderId"] == $data["reply"]["orderId"] // ticket oluştururken orderId gönderimi yaparsanız nonce'ta sisteminizdeki orderId ile kontrol sağlayabilirsiniz.
-        if ($orderData && $orderData["amount"] == $data["reply"]["totalAmount"]) {
-            $orderData["status"] = "Approved";
-            $orderData["message"] = "Ödeme onaylandı";
+        if ($orderData && $orderData['amount'] == $data['reply']['totalAmount']) {
+            $orderData['status'] = 'Approved';
+            $orderData['message'] = 'Ödeme onaylandı';
             BexUtil::writeJsonFile($filename, $table);
+
             return true;
         }
-        $orderData["error"] = true;
-        $orderData["status"] = "Not_Approved";
-        $orderData["message"] = "Ödeme reddedildi !";
+        $orderData['error'] = true;
+        $orderData['status'] = 'Not_Approved';
+        $orderData['message'] = 'Ödeme reddedildi !';
         BexUtil::writeJsonFile($filename, $table);
+
         return false;
     });
     if ($nonceResult->getPaymentPurchased()) { // payment is ok.
-
         // log($nonceResult->getCode());
         // log($nonceResult->getCall());
         // log($nonceResult->getDescription());
         // log($nonceResult->getMessage());
         // log($nonceResult->getResult());
-// error_log($nonceResult->getParameters());
+        // error_log($nonceResult->getParameters());
         // log($nonceResult->getBkmTokenId());
         // log($nonceResult->getTotalAmount());
         // log($nonceResult->getInstallmentCount());
@@ -117,13 +117,10 @@ try {
         // log($nonceResult->getPosResult()->getPosTransactionId());
         // log($nonceResult->getPosResult()->getPosBank());
         // log($nonceResult->getError());
-        writeDb($orderId, "SUCCESS", "Ödeme tamamlandı");
+        writeDb($orderId, 'SUCCESS', 'Ödeme tamamlandı');
     } else {
-        writeDb($orderId, "FAILED", "Ödeme yapılamadı !", true);
+        writeDb($orderId, 'FAILED', 'Ödeme yapılamadı !', true);
     }
 } catch (Exception $exception) {
-    writeDb($orderId, $exception->getCode(), "Ödeme yapılamadı !", true, $exception->getMessage());
+    writeDb($orderId, $exception->getCode(), 'Ödeme yapılamadı !', true, $exception->getMessage());
 }
-
-
-?>
