@@ -16,7 +16,6 @@ use Bex\merchant\token\Token;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
-use HttpRequestException;
 
 class MerchantService
 {
@@ -300,6 +299,9 @@ class MerchantService
      * @param $nonceToken
      *
      * @return NonceResultResponse
+     *
+     * @throws MerchantServiceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function sendNonceResponse(MerchantNonceResponse $response, $connectionId, $ticketId, $connectionToken, $nonceToken)
     {
@@ -316,6 +318,7 @@ class MerchantService
      * @return NonceResultResponse
      *
      * @throws MerchantServiceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function nonce($requestBody, $connectionId, $ticketId, $connectionToken, $nonceToken)
     {

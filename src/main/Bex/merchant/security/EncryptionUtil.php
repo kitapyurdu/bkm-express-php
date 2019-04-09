@@ -39,7 +39,7 @@ class EncryptionUtil
         $result = $unformattedKey;
         $lineCharacter = 0;
 
-        if (substr($unformattedKey, 0, 5) !== '-----') {
+        if ('-----' !== substr($unformattedKey, 0, 5)) {
             if ('public' == $keyType) {
                 $lineCharacter = 64;
                 $result = wordwrap($unformattedKey, $lineCharacter, "\n", true);
