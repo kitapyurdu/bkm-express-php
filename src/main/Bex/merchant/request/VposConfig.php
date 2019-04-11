@@ -4,19 +4,12 @@ namespace Bex\merchant\request;
 
 class VposConfig
 {
-    private $vposUserId;
-    private $vposPassword;
-    private $extra = array();
-    private $bankIndicator;
-    private $serviceUrl;
-    private $preAuth;
-
-    /**
-     * VposConfig constructor.
-     */
-    public function __construct()
-    {
-    }
+    public $vposUserId;
+    public $vposPassword;
+    public $extra = [];
+    public $bankIndicator;
+    public $serviceUrl;
+    public $preAuth;
 
     public function addSubMerchantForFinans($subMerchantName, $subMerchantId, $subMerchantPostalCode, $subMerchantCity, $subMerchantCountry)
     {
