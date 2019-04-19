@@ -1,8 +1,8 @@
 <?php
 
-require_once './setup.php';
-require_once './Bex.php';
-require_once './BexUtil.php';
+require_once __DIR__.'/setup.php';
+require_once __DIR__.'/Bex.php';
+require_once __DIR__.'/BexUtil.php';
 
 $request_body = json_decode(file_get_contents('php://input'));
 
@@ -22,7 +22,7 @@ $type = $request_body->type;
 
 $data = $table[$request_body->orderId];
 
-$nonceUrl = "$serverUrl/operations/nonce.php";
+$nonceUrl = "$serverUrl/samples/operations/nonce.php";
 
 /**
  * Ticket Input
@@ -51,12 +51,12 @@ $ticketData = [
 ];
 
 if ('payment_with_installment' == $type) {
-    $ticketData['installmentUrl'] = "$serverUrl/operations/installment.php";
+    $ticketData['installmentUrl'] = "$serverUrl/samples/operations/installment.php";
 }
 
 if ('payment_with_address' == $type) {
     $ticketData['address'] = true;
-    $agreementUrl = "$serverUrl/operations/agreement.php";
+    $agreementUrl = "$serverUrl/samples/operations/agreement.php";
     $ticketData['agreementUrl'] = $agreementUrl;
 }
 

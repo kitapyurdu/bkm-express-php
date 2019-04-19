@@ -31,9 +31,9 @@ class MerchantServiceTest extends Setup
         $config = Setup::integrationMerchantConfig();
         $merchantService = new MerchantService($config);
         $merchantResponse = $merchantService->login();
-        $merchantService->oneTimeTicket($merchantResponse->getToken(), '1000,52', self::INSTALLMENT_URL);
-        var_dump($merchantService->oneTimeTicket($merchantResponse->getToken(), '1000,52', self::INSTALLMENT_URL));
-        self::assertEquals('ok', $merchantService->oneTimeTicket($merchantResponse->getToken(), '1000,52', self::INSTALLMENT_URL)->getResult());
+        $merchantService->oneTimeTicket($merchantResponse->getToken(), '1000', self::INSTALLMENT_URL);
+        var_dump($merchantService->oneTimeTicket($merchantResponse->getToken(), '1000', self::INSTALLMENT_URL));
+        self::assertEquals('ok', $merchantService->oneTimeTicket($merchantResponse->getToken(), '1000', self::INSTALLMENT_URL)->getResult());
     }
 
     /*
@@ -42,7 +42,7 @@ class MerchantServiceTest extends Setup
         $config = Setup::integrationMerchantConfig();
         $merchantService = new MerchantService($config);
         $merchantResponse = $merchantService->login();
-        $ticketResponse = $merchantService->oneTimeTicket($merchantResponse->getToken(), "1000,52", self::INSTALLMENT_URL);
+        $ticketResponse = $merchantService->oneTimeTicket($merchantResponse->getToken(), "1000", self::INSTALLMENT_URL);
         $ticketId = $ticketResponse->getTicketPath();
         $merchantConnectionId = $merchantResponse->getPath();
         $merchantToken = $merchantResponse->getConnectionToken();

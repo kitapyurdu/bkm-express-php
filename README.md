@@ -48,6 +48,28 @@ değerlerini ekleyebilirsiniz. İlerleyen zamanlarda sürüm numarası ile kulla
 
 #### Samples
 
+Bkm tarafından işlem onayı için `nonce` request gönderilecektir. Bu requesti karşılayan gerçek bir sunucuya ihtiyacınız var. Bu ihtiyacı localinizde karşılamak için [ngrok](https://ngrok.io) programını kullanmanızı öneririz.
+
+Firmanıza verilen private key ve merchant id bilgilerini girin:
+
+    nano samples/operations/config.php
+    
+Composer ile bağımlılıkları yükleyin
+
+    composer install 
+
+Php sunucusunu başlatın:
+
+    php -S 127.0.0.1:8002
+    
+Ngrok ile proxy ayarlayın:
+
+    ngrok http 8002
+    
+Ngrok tarafından üretilen adresi kullanarak, samples klasörünü açın. 
+
+http://xxxxxx.ngrok.io/samples
+
 #### Configure
 
 

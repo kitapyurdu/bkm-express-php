@@ -44,7 +44,7 @@
                 Bex.init(ticket, "modal", modalOptions);
             })
             .catch(function (err) {
-                console.log(err);
+                console.log('Error', err);
             })
     };
     root.BexUtil = BexUtil;

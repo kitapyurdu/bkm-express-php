@@ -36,6 +36,8 @@ class Bex
 
     private static function init($environment, $merchantId, $merchantPrivateKey)
     {
+        Log::debug(__METHOD__);
+
         if (!isset($environment)) {
             throw new ConfigurationException("BKM Express Ayar dosyasında environment değeri bulunamadı ! Ipucu: 'environment' değeri 'DEV', 'LOCAL', 'SANDBOX', 'PRODUCTION' ortamlarından birini belirtmelidir !");
         }
@@ -58,6 +60,8 @@ class Bex
      */
     public static function configure($environment, $merchantId, $merchantPrivateKey)
     {
+        Log::debug(__METHOD__);
+
         return new Bex($environment, $merchantId, $merchantPrivateKey);
     }
 
@@ -90,6 +94,7 @@ class Bex
      */
     public function createTicket($ticketArray)
     {
+        Log::debug(__METHOD__);
         $this->login();
         $amount = $ticketArray['amount'];
         if (empty($amount)) {
@@ -105,8 +110,8 @@ class Bex
         $builder->setNonceUrl(getValue($ticketArray, 'nonceUrl'));
         $builder->setCampaignCode(getValue($ticketArray, 'campaignCode'));
         $builder->setOrderId(getValue($ticketArray, 'orderId'));
-        $builder->setTckn(getValue($ticketArray, 'tckn'));
-        $builder->setMsisdn(getValue($ticketArray, 'msisdn'));
+//        $builder->setTckn(getValue($ticketArray, 'tckn'));
+//        $builder->setMsisdn(getValue($ticketArray, 'msisdn'));
         $builder->setAddress(getValue($ticketArray, 'address'));
         $builder->setAgreementUrl(getValue($ticketArray, 'agreementUrl'));
 
@@ -202,6 +207,9 @@ class Bex
             //SIGNATURE KONTROLUNDE TICKET ID OLARAK NONCE REQUESTTEN GELEN TICKET ID ILE KONTROL ETMEK GEREKMEKTEDIR
             //KONTROL EDILECEK OLAN SIGNATURE DA NONCE DAN GELMEKTEDIR.
             if (EncryptionUtil::verifyBexSign($data['id'], $data['signature'])) {
+                Log::debug(__METHOD__, [
+                    'action' => 'Bex Sign Verified',
+                ]);
                 //DONULMESI GEREKEN RESPONSE'UN KOD ORNEGI.
                 $merchantNonceResponse->setResult($callback($data));
                 $merchantNonceResponse->setNonce($data['token']);
@@ -213,6 +221,11 @@ class Bex
                 //3-)NONCE REQUESTTEN GELEN PATH
                 //4-)MERCHANT LOGINDEN GELEN CONNECTION TOKEN
                 //5-)NONCE REQUESTTEN GELEN TOKEN
+
+                Log::debug(__METHOD__, [
+                    'action' => 'Sending Nonce Response',
+                ]);
+
                 return $this->merchantService->sendNonceResponse(
                     $merchantNonceResponse,
                     $this->merchantLoginResponse->getPath(),
@@ -246,17 +259,27 @@ class Bex
     {
         //ISTEKDEN GELEN REQUESTI ALIYORUZ.
         $data = json_decode(file_get_contents('php://input'), true);
+
+        Log::debug(__METHOD__, (array) $data);
+
         //NULL CHECK
         if (null != $data) {
             //DONULMESI GEREKEN RESPONSE ORNEGI JSON FORMATINDA OLMALIDIR.
             header('Content-type: application/json');
             // NONCE ILK RESPONSE
             //ILK RESPONSE UN FORMATINA DIKKAT EDILMELIDIR.
+            Log::debug(__METHOD__, [
+                'action' => 'ob_start',
+            ]);
             ob_start();
-            echo json_encode(array(
+            echo json_encode([
                 'result' => 'ok',
                 'data' => 'ok',
-            ));
+            ]);
+            Log::debug(__METHOD__, [
+                'result' => 'ok',
+                'data' => 'ok',
+            ]);
             $size = ob_get_length();
             // Disable compression (in case content length is compressed).
             header('Content-Encoding: none');

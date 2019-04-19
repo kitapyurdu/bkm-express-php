@@ -10,11 +10,7 @@
 require_once __DIR__.'/../../vendor/autoload.php';
 require_once './Bex.php';
 require_once './BexUtil.php';
-
-const ENVIRONMENT = \Bex\enums\Environment::PREPROD; // Environments: DEV, LOCAL, SANDBOX, PREPROD, PRODUCTION
-const MERCHANT_ID = '';
-const PRIVATE_KEY = '-----BEGIN RSA PRIVATE KEY-----
------END RSA PRIVATE KEY-----';
+require_once  './config.php';
 
 $serverUrl = "http://$_SERVER[HTTP_HOST]";
 $bex = Bex::configure(
@@ -22,3 +18,24 @@ $bex = Bex::configure(
     MERCHANT_ID,
     PRIVATE_KEY
 );
+
+class Log {
+    /** @var \Monolog\Logger */
+    private static $logger;
+
+    public static function debug($message, $context = [])
+    {
+        if(!self::$logger) {
+            self::initLogger();
+        }
+
+        self::$logger->debug($message, $context);
+    }
+
+    private static function initLogger()
+    {
+        self::$logger = new \Monolog\Logger('bkm_samples');
+        self::$logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__.'/../samples.log'));
+    }
+}
+
