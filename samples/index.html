@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="samples/BexUtil.js"></script>
+    <script src="/samples/BexUtil.js"></script>
     <script>
 
         // Purchase Complete
         function onComplete(params, status) {
             if ("success" === status) {
                 BexUtil
-                    .queryTicket("samples/operations/status.php", params)
+                    .queryTicket("/samples/operations/status.php", params)
                     .then(function (response) {
                         $("#payment_result .modal-body").html("<div> Ödemeniz başarıyla tamamlandı ! Sipariş Numaranız : " + response.orderId);
                         $("#payment_result").modal({
@@ -41,7 +41,7 @@
 
         function openModal(params, container, skipButton) {
             document.getElementById(container).innerHTML = "";
-            BexUtil.showModal("samples/operations/ticket.php", params,
+            BexUtil.showModal("/samples/operations/ticket.php", params,
                 getModalOptions(container, skipButton, params));
         }
 
