@@ -1,3 +1,8 @@
+<?php
+
+require_once __DIR__.'/setup.php';
+Log::debug('HTTP REQUEST TO => '.__FILE__);
+?>
 <!DOCTYPE HTML>
 <html lang="en">
 <head>

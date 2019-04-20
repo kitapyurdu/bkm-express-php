@@ -1,6 +1,9 @@
 <?php
 
 require_once './setup.php';
+
+Log::debug('HTTP REQUEST TO => '.__FILE__);
+
 require_once './BexUtil.php';
 
 $userData = BexUtil::readJsonFile('./data.json');

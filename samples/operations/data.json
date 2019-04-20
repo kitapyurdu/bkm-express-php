@@ -499,33 +499,5 @@
         "error": false,
         "status": "STARTED",
         "message": "\u00d6deme a\u015famas\u0131na ge\u00e7ildi."
-    },
-    "5ba46b3c655842674ecb4c442dc04fc1": {
-        "amount": "1000",
-        "error": true,
-        "status": 0,
-        "message": "\u00d6deme yap\u0131lamad\u0131 !",
-        "detail": "Client error: `POST https:\/\/preprod-api.bkmexpress.com.tr\/v1\/merchant\/bUBjM2IxNWEwNi0yNzc1LTQ0NjctYTQ3OC1jYTEwOTVlYWFmZTU=\/ticket\/bUAvbS9jM2IxNWEwNi0yNzc1LTQ0NjctYTQ3OC1jYTEwOTVlYWFmZTUvdC84MDJmNzAwYi03NjdkLTQ1MzgtOTI2NC04MGZjN2Q5YWI3NjFAZ2UucGJ6Lm94ei5vcmsyLmZyZWlyZS5uY3YuenJlcHVuYWcuY25senJhZy5Dbmx6cmFnR3ZweHJn\/operate?name=commit` resulted in a `424 Failed Dependency` response:\n{\"code\":\"EX-BE-TIC-004\",\"call\":\"merchant\/{id}\/ticket\/{tid}\/operate\",\"description\":\"Operasyon stat\u00fcs\u00fc hatal\u0131\",\"message (truncated...)\n"
-    },
-    "0952b25fa524ce40df5c704fd2906c28": {
-        "amount": "1000",
-        "error": true,
-        "status": 0,
-        "message": "\u00d6deme yap\u0131lamad\u0131 !",
-        "detail": "Client error: `POST https:\/\/preprod-api.bkmexpress.com.tr\/v1\/merchant\/bUBjM2IxNWEwNi0yNzc1LTQ0NjctYTQ3OC1jYTEwOTVlYWFmZTU=\/ticket\/bUAvbS9jM2IxNWEwNi0yNzc1LTQ0NjctYTQ3OC1jYTEwOTVlYWFmZTUvdC8zYWM5MjA2ZS0wZmRhLTRmMTUtYmY2Yi0yMjUwZDI3NDFhMzZAZ2UucGJ6Lm94ei5vcmsyLmZyZWlyZS5uY3YuenJlcHVuYWcuY25senJhZy5Dbmx6cmFnR3ZweHJn\/operate?name=commit` resulted in a `424 Failed Dependency` response:\n{\"code\":\"EX-BE-TIC-004\",\"call\":\"merchant\/{id}\/ticket\/{tid}\/operate\",\"description\":\"Operasyon stat\u00fcs\u00fc hatal\u0131\",\"message (truncated...)\n"
-    },
-    "a7dda7b0ffaea5845baed658cab65cd8": {
-        "amount": "1000",
-        "error": true,
-        "status": 0,
-        "message": "\u00d6deme yap\u0131lamad\u0131 !",
-        "detail": "Client error: `POST https:\/\/preprod-api.bkmexpress.com.tr\/v1\/merchant\/bUBjM2IxNWEwNi0yNzc1LTQ0NjctYTQ3OC1jYTEwOTVlYWFmZTU=\/ticket\/bUAvbS9jM2IxNWEwNi0yNzc1LTQ0NjctYTQ3OC1jYTEwOTVlYWFmZTUvdC9hNGFjMjE4OC0wZmZmLTRhNDQtYjk2Mi02M2YyMzViMDVhYTlAZ2UucGJ6Lm94ei5vcmsyLmZyZWlyZS5uY3YuenJlcHVuYWcuY25senJhZy5Dbmx6cmFnR3ZweHJn\/operate?name=commit` resulted in a `424 Failed Dependency` response:\n{\"code\":\"EX-BE-TIC-004\",\"call\":\"merchant\/{id}\/ticket\/{tid}\/operate\",\"description\":\"Operasyon stat\u00fcs\u00fc hatal\u0131\",\"message (truncated...)\n"
-    },
-    "738c2a3c454b5788a7d7e6c86540df7e": {
-        "amount": "1000",
-        "error": true,
-        "status": 0,
-        "message": "\u00d6deme yap\u0131lamad\u0131 !",
-        "detail": "Client error: `POST https:\/\/preprod-api.bkmexpress.com.tr\/v1\/merchant\/bUBjM2IxNWEwNi0yNzc1LTQ0NjctYTQ3OC1jYTEwOTVlYWFmZTU=\/ticket\/bUAvbS9jM2IxNWEwNi0yNzc1LTQ0NjctYTQ3OC1jYTEwOTVlYWFmZTUvdC83ZTkwYjFiMi05ZjAxLTQ4MDgtOTdjZi01OTRiOTAwODI1YmVAZ2UucGJ6Lm94ei5vcmsyLmZyZWlyZS5uY3YuenJlcHVuYWcuY25senJhZy5Dbmx6cmFnR3ZweHJn\/operate?name=commit` resulted in a `424 Failed Dependency` response:\n{\"code\":\"EX-BE-TIC-004\",\"call\":\"merchant\/{id}\/ticket\/{tid}\/operate\",\"description\":\"Operasyon stat\u00fcs\u00fc hatal\u0131\",\"message (truncated...)\n"
     }
 }

@@ -1,6 +1,9 @@
 <?php
 
 require_once __DIR__.'/setup.php';
+
+Log::debug('HTTP REQUEST TO => '.__FILE__);
+
 require_once __DIR__.'/Bex.php';
 require_once __DIR__.'/BexUtil.php';
 
@@ -13,6 +16,7 @@ $orderId = $request_body->orderId;
 $table[$orderId] = array(
     'amount' => $request_body->amount,
     'error' => false,
+    'orderId' => $request_body->orderId,
     'status' => 'STARTED',
     'message' => 'Ödeme aşamasına geçildi.',
 );
