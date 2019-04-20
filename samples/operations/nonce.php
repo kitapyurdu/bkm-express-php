@@ -97,7 +97,8 @@ try {
 
         return false;
     });
-    Log::debug(__FILE__.' - nonceResult =>'. serialize($nonceResult));
+    Log::debug(__FILE__.' - nonceResult::getPaymentPurchased => '. $nonceResult->getPaymentPurchased());
+    Log::debug(__FILE__.' - nonceResult => '. serialize($nonceResult));
     if ($nonceResult->getPaymentPurchased()) { // payment is ok.
         // log($nonceResult->getCode());
         // log($nonceResult->getCall());

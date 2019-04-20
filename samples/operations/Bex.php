@@ -213,7 +213,7 @@ class Bex
                 //DONULMESI GEREKEN RESPONSE'UN KOD ORNEGI.
                 $merchantNonceResponse->setResult($callback($data));
                 $merchantNonceResponse->setNonce($data['token']);
-                $merchantNonceResponse->setId($data['path']);
+                $merchantNonceResponse->setId($data['id']);
                 //NONCE RESPONSU SETLEDIKDEN SONRA MERCHANT SERVICE DEN SENDNONCERESPONCE SERVISINI CAGIRIYORUZ.
                 //PARAMETRELER SIRASIYLA
                 //1-)SETLEDIGIMIZ RESPONSE SINIFI
@@ -238,8 +238,12 @@ class Bex
                 //BURADA RESULT FALSE OLARAK SETLENIR VE MESSAGE SETLENIR.
                 $merchantNonceResponse->setResult(false);
                 $merchantNonceResponse->setNonce($data['token']);
-                $merchantNonceResponse->setId($data['path']);
+                $merchantNonceResponse->setId($data['id']);
                 $merchantNonceResponse->setMessage('Signature verification failed');
+
+                Log::debug(__METHOD__, [
+                    'action' => 'Sending Nonce Response as Failed',
+                ]);
 
                 return $this->merchantService->sendNonceResponse(
                     $merchantNonceResponse,
