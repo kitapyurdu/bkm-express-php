@@ -97,6 +97,7 @@ try {
 
         return false;
     });
+    Log::debug(__FILE__.' - nonceResult =>'. serialize($nonceResult));
     if ($nonceResult->getPaymentPurchased()) { // payment is ok.
         // log($nonceResult->getCode());
         // log($nonceResult->getCall());
@@ -125,5 +126,6 @@ try {
         writeDb($orderId, 'FAILED', 'Ödeme yapılamadı !', true);
     }
 } catch (Exception $exception) {
+    Log::debug(__FILE__.' - EXCEPTION => '. $exception->getMessage());
     writeDb($orderId, $exception->getCode(), 'Ödeme yapılamadı !', true, $exception->getMessage());
 }
