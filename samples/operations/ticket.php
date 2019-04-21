@@ -31,13 +31,13 @@ $nonceUrl = "$serverUrl/samples/operations/nonce.php";
 /**
  * Ticket Input
  * {
- *  "amount": "1000",  // zorunlu (Ödeme Tutarı)
+ *  "amount": "1000,54",  // zorunlu (Ödeme Tutarı)
  *  "installmentUrl": "https://isyeri.com/installment",  // opsiyonel ("SIZIN SERVER'INIZDA TAKSITLERI SORGULAMAK ICIN BIR URL")
  *  "nonceUrl": "https://isyeri.com/nonce",  // zorunlu ("SIPARISIN UYGUNLUGUNUN KONTROL EDILMESI ICIN URL")
  *  "campaignCode": "BKM1234",   // opsiyonel (Kampanya Kodu)
  *  "orderId": "123456", // opsiyonel. ( Sipariş Numarası - Her Ticket isteği için farklı bir değer içermeli)
  *  "tckn": {  // opsiyonel (number => "TC Kimlik Numarası", check => "BKM Express içerisinde kontrol edilsin mi")
- *    "no": "10000000146",
+ *    "no": "1000,540000146",
  *    "check": true
  *  },
  *  "msisdn": { // opsiyonel ('no' => "cep telefonu numarası", 'check' => "BKM Express içerisinde kontrol edilsin mi")
@@ -49,16 +49,16 @@ $nonceUrl = "$serverUrl/samples/operations/nonce.php";
  * }.
  */
 $ticketData = [
-    'amount' => number_format($data['amount'], 2, ',', ''),
+    'amount' => $data['amount'],
     'nonceUrl' => $nonceUrl,
     'orderId' => $request_body->orderId,
 ];
 
-if ('payment_with_installment' == $type) {
+if ('payment_with_installment' === $type) {
     $ticketData['installmentUrl'] = "$serverUrl/samples/operations/installment.php";
 }
 
-if ('payment_with_address' == $type) {
+if ('payment_with_address' === $type) {
     $ticketData['address'] = true;
     $agreementUrl = "$serverUrl/samples/operations/agreement.php";
     $ticketData['agreementUrl'] = $agreementUrl;

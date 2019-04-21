@@ -5,6 +5,7 @@ use Bex\exceptions\BexException;
 use Bex\exceptions\ConfigurationException;
 use Bex\merchant\request\Builder;
 use Bex\merchant\request\InstallmentRequest;
+use Bex\merchant\request\NonceRequest;
 use Bex\merchant\response\BinAndInstallments;
 use Bex\merchant\response\InstallmentsResponse;
 use Bex\merchant\response\nonce\MerchantNonceResponse;
@@ -27,6 +28,8 @@ class Bex
     private $isLoggedIn = false;
     /** @var MerchantService */
     private $merchantService;
+
+    /** @var \Bex\merchant\response\MerchantLoginResponse */
     private $merchantLoginResponse;
 
     private function __construct($environment, $merchantId, $merchantPrivateKey)
@@ -190,10 +193,24 @@ class Bex
 
     public function approve(callable $callback)
     {
-        $this->login();
         //NULL CHECK
         $data = $this->takeDataAndRespond();
         if (null != $data) { // Data is ok.
+            $this->login();
+
+            $nonceRequest = new NonceRequest(
+                $data['id'],
+                $data['path'],
+                $data['issuer'],
+                $data['approver'],
+                $data['token'],
+                $data['signature'],
+                $data['reply'],
+                $data['reply']['hash'],
+                $data['reply']['tcknMatch'],
+                $data['reply']['msisdnMatch']
+            );
+
             //ILK RESPONSE U DONDUKDEN SONRA MICRO SERVIS  2. RESPONSU DONECEGIZ.
             //NONCE RESPONSE ORNEGI
             $merchantNonceResponse = new MerchantNonceResponse();
@@ -210,10 +227,12 @@ class Bex
                 Log::debug(__METHOD__, [
                     'action' => 'Bex Sign Verified',
                 ]);
+
                 //DONULMESI GEREKEN RESPONSE'UN KOD ORNEGI.
                 $merchantNonceResponse->setResult($callback($data));
-                $merchantNonceResponse->setNonce($data['token']);
-                $merchantNonceResponse->setId($data['id']);
+                $merchantNonceResponse->setNonce($nonceRequest->getToken());
+                $merchantNonceResponse->setId($nonceRequest->getPath());
+
                 //NONCE RESPONSU SETLEDIKDEN SONRA MERCHANT SERVICE DEN SENDNONCERESPONCE SERVISINI CAGIRIYORUZ.
                 //PARAMETRELER SIRASIYLA
                 //1-)SETLEDIGIMIZ RESPONSE SINIFI
@@ -229,9 +248,9 @@ class Bex
                 return $this->merchantService->sendNonceResponse(
                     $merchantNonceResponse,
                     $this->merchantLoginResponse->getPath(),
-                    $data['path'],
+                    $nonceRequest->getPath(),
                     $this->merchantLoginResponse->getConnectionToken(),
-                    $data['token']
+                    $nonceRequest->getToken()
                 );
             } else {
                 //BASARISIZ RESPONSE ORNEGI
@@ -257,7 +276,7 @@ class Bex
     }
 
     /**
-     * respondOK.
+     * @return array|mixed
      */
     protected function takeDataAndRespond()
     {
@@ -305,10 +324,23 @@ class Bex
                 fastcgi_finish_request();
             }
 
+            if (!isset($data['reply']['deliveryAddress'])) {
+                $data['reply']['deliveryAddress'] = null;
+            }
+            if (!isset($data['reply']['billingAddress'])) {
+                $data['reply']['billingAddress'] = null;
+            }
+            if (!isset($data['reply']['tcknMatch'])) {
+                $data['reply']['tcknMatch'] = false;
+            }
+            if (!isset($data['reply']['msisdnMatch'])) {
+                $data['reply']['msisdnMatch'] = false;
+            }
+
             return $data;
         }
 
-        return null;
+        return [];
     }
 
     public function getConfig()

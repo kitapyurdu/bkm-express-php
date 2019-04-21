@@ -47,7 +47,7 @@
 
         function generateOrderId() {
             function s4() {
-                return Math.floor((1 + Math.random()) * 0x10000)
+                return Math.floor((1 + Math.random()) * 0x1000,540)
                     .toString(16)
                     .substring(1);
             }
@@ -64,7 +64,7 @@
             openModal({
                 type: "simple_payment",
                 orderId: generateOrderId(),
-                amount: "1000"
+                amount: "1000,54"
             }, "bex-payment-modal", true);
         }
         /**
@@ -74,7 +74,7 @@
             openModal({
                 type: "simple_payment",
                 orderId: generateOrderId(),
-                amount: "1000"
+                amount: "1000,54"
             }, "bex-payment-modal", false);
         }
 
@@ -85,7 +85,7 @@
             openModal({
                 type: "payment_with_installment",
                 orderId: generateOrderId(),
-                amount: "1000"
+                amount: "1000,54"
             }, "bex-payment-modal", true);
         }
         /**
@@ -95,7 +95,7 @@
             openModal({
                 type: "payment_with_installment",
                 orderId: generateOrderId(),
-                amount: "1000"
+                amount: "1000,54"
             }, "bex-payment-modal", false);
         }
 
@@ -106,7 +106,7 @@
             openModal({
                 type: "payment_with_address",
                 orderId: generateOrderId(),
-                amount: "1000"
+                amount: "1000,54"
             }, "bex-payment-modal", true);
         }
         /**
@@ -116,7 +116,7 @@
             openModal({
                 type: "payment_with_address",
                 orderId: generateOrderId(),
-                amount: "1000"
+                amount: "1000,54"
             }, "bex-payment-modal", false);
         }
 

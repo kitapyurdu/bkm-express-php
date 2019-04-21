@@ -14,8 +14,7 @@ use Bex\merchant\response\TicketResponse;
 use Bex\merchant\security\EncryptionUtil;
 use Bex\merchant\token\Token;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\GuzzleException;
 
 class MerchantService
 {
@@ -53,10 +52,8 @@ class MerchantService
 
                 return new MerchantLoginResponse($bodyData['code'], $bodyData['call'], $bodyData['description'], $bodyData['message'], $bodyData['result'], $bodyData['parameters'], $bodyData['data']['id'], $bodyData['data']['path'], $bodyData['data']['token']);
             }
-        } catch (ClientException $exception) {
+        } catch (GuzzleException $exception) {
             throw new MerchantServiceException($exception->getMessage());
-        } catch (ServerException $exception) {
-            throw new MerchantServiceException('Merchant login got connection problem.');
         }
     }
 
@@ -136,10 +133,8 @@ class MerchantService
 
                 return new TicketResponse($bodyData['code'], $bodyData['call'], $bodyData['description'], $bodyData['message'], $bodyData['result'], $bodyData['parameters'], $bodyData['data']['id'], $bodyData['data']['path'], $bodyData['data']['token']);
             }
-        } catch (ClientException $exception) {
+        } catch (GuzzleException $exception) {
             throw new MerchantServiceException($exception->getMessage());
-        } catch (ServerException $exception) {
-            throw new MerchantServiceException('Ticket generation got connection problem.');
         }
     }
 
@@ -220,6 +215,9 @@ class MerchantService
      * @param $nonceUrl
      *
      * @return TicketResponse
+     *
+     * @throws MerchantServiceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function oneTimeTicketWithNonce(Token $connection, $amount, $installmentUrl, $nonceUrl)
     {
@@ -237,6 +235,9 @@ class MerchantService
      * @param $amount
      *
      * @return TicketResponse
+     *
+     * @throws MerchantServiceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function oneTimeTicketWithoutInstallmentUrl(Token $connection, $amount)
     {
@@ -254,6 +255,9 @@ class MerchantService
      * @param $nonceUrl
      *
      * @return TicketResponse
+     *
+     * @throws MerchantServiceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function oneTimeTicketWithoutInstallmentUrlWithNonce(Token $connection, $amount, $nonceUrl)
     {
@@ -270,6 +274,9 @@ class MerchantService
      * @param Builder $builder
      *
      * @return TicketResponse
+     *
+     * @throws MerchantServiceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function oneTimeTicketWithBuilder(Token $connection, Builder $builder)
     {
@@ -309,7 +316,7 @@ class MerchantService
     }
 
     /**
-     * @param $requestBody
+     * @param MerchantNonceResponse $requestBody
      * @param $connectionId
      * @param $ticketId
      * @param $connectionToken
@@ -320,14 +327,20 @@ class MerchantService
      * @throws MerchantServiceException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function nonce($requestBody, $connectionId, $ticketId, $connectionToken, $nonceToken)
+    public function nonce(MerchantNonceResponse $requestBody, $connectionId, $ticketId, $connectionToken, $nonceToken)
     {
         $requestBody = $this->encodeMerchantNonceRequestObjectToJson($requestBody);
+
         try {
             $client = new Client();
-            $res = $client->request('POST', $this->getMerchantNonceUrl($connectionId, $ticketId), $this->postRequestOptionsWithNonceTokenAndToken($requestBody, $connectionToken, $nonceToken));
-            if (200 === $res->getStatusCode()) {
-                $bodyData = json_decode($res->getBody()->getContents(), true);
+            $request = $client->request(
+                'POST',
+                $this->getMerchantNonceUrl($connectionId, $ticketId),
+                $this->postRequestOptionsWithNonceTokenAndToken($requestBody, $connectionToken, $nonceToken)
+            );
+
+            if (200 === $request->getStatusCode()) {
+                $bodyData = json_decode($request->getBody()->getContents(), true);
 
                 return new NonceResultResponse(
                     $bodyData['code'],
@@ -348,9 +361,7 @@ class MerchantService
                     array_key_exists('error', $bodyData['data']) ? $bodyData['data']['error'] : null
                 );
             }
-        } catch (ClientException $exception) {
-            throw new MerchantServiceException($exception->getMessage());
-        } catch (ServerException $exception) {
+        } catch (GuzzleException $exception) {
             throw new MerchantServiceException($exception->getMessage());
         }
     }
@@ -358,7 +369,7 @@ class MerchantService
     /**
      * @param MerchantNonceResponse $merchantNonceResponse
      *
-     * @return mixed
+     * @return string
      */
     public function encodeMerchantNonceRequestObjectToJson(MerchantNonceResponse $merchantNonceResponse)
     {
@@ -382,7 +393,7 @@ class MerchantService
     }
 
     /**
-     * @param $requestBody
+     * @param string $requestBody
      * @param $connectionToken
      * @param $nonceToken
      *
