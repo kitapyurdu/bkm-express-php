@@ -12,6 +12,8 @@ require_once './Bex.php';
 require_once './BexUtil.php';
 require_once  './config.php';
 
+const DATA_FILE_NAME = __DIR__.'/data.json';
+
 $serverUrl = "http://$_SERVER[HTTP_HOST]";
 $bex = Bex::configure(
     ENVIRONMENT,

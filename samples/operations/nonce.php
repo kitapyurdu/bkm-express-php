@@ -6,15 +6,9 @@ Log::debug('HTTP REQUEST TO => '.__FILE__);
 
 require_once './BexUtil.php';
 
-$filename = './data.json';
-$table = BexUtil::readJsonFile($filename);
-
-$orderId = null;
-
 function writeDb($orderId, $status, $message, $error = false, $detail = null)
 {
-    global $table;
-    global $filename;
+    $table = BexUtil::readJsonFile(DATA_FILE_NAME);
     $orderData = $table[$orderId];
     if (!$orderData) {
         throw new Exception("Order not found by $orderId orderId");
@@ -26,28 +20,31 @@ function writeDb($orderId, $status, $message, $error = false, $detail = null)
     $table[$orderId] = $orderData;
 
     Log::debug(__METHOD__, (array) $orderData);
-    BexUtil::writeJsonFile($filename, $table);
+    BexUtil::writeJsonFile(DATA_FILE_NAME, $table);
 }
+
+$orderId = null;
 
 try {
     $nonceResult = $bex->approve(function ($data) {
         global $orderId;
         $orderId = $data['reply']['orderId'];
-        global $table;
-        global $filename;
+
+        $table = BexUtil::readJsonFile(DATA_FILE_NAME);
+
         $orderData = $table[$orderId];
         // $orderData["orderId"] == $data["reply"]["orderId"] // ticket oluştururken orderId gönderimi yaparsanız nonce'ta sisteminizdeki orderId ile kontrol sağlayabilirsiniz.
         if ($orderData && $orderData['amount'] == $data['reply']['totalAmount']) {
             $orderData['status'] = 'Approved';
             $orderData['message'] = 'Ödeme onaylandı';
-            BexUtil::writeJsonFile($filename, $table);
+            BexUtil::writeJsonFile(DATA_FILE_NAME, $table);
 
             return true;
         }
         $orderData['error'] = true;
         $orderData['status'] = 'Not_Approved';
         $orderData['message'] = 'Ödeme reddedildi !';
-        BexUtil::writeJsonFile($filename, $table);
+        BexUtil::writeJsonFile(DATA_FILE_NAME, $table);
 
         return false;
     });
@@ -84,7 +81,7 @@ try {
     Log::debug(__FILE__.' - EXCEPTION => '. $exception->getRequest()->getBody()->getContents());
     Log::debug(__FILE__.' - EXCEPTION => '. $exception->getMessage());
     writeDb($orderId, $exception->getCode(), 'Ödeme yapılamadı !', true, $exception->getMessage());
-}/* catch (Exception $exception) {
+} catch (Exception $exception) {
     Log::debug(__FILE__.' - EXCEPTION => '. $exception->getMessage());
     writeDb($orderId, $exception->getCode(), 'Ödeme yapılamadı !', true, $exception->getMessage());
-}*/
+}

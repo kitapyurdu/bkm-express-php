@@ -295,6 +295,8 @@ class Bex
                 'action' => 'ob_start',
             ]);
             ob_start();
+            ob_implicit_flush(true);
+            ob_end_flush();
             echo json_encode([
                 'result' => 'ok',
                 'data' => 'ok',
@@ -313,6 +315,7 @@ class Bex
             ignore_user_abort(true);
             set_time_limit(0);
             ob_end_flush();
+            ob_end_clean();
             flush();
             sleep(5);
             // check if fastcgi_finish_request is callable
