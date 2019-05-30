@@ -14,7 +14,6 @@ class MerchantServiceTest extends Setup
 
     public function testLoginWithParameters()
     {
-        $this->markTestSkipped('Bex\exceptions\MerchantServiceException: Merchant login got connection problem.');
         $config = Setup::integrationMerchantConfig();
         $this->assertInstanceOf(Configuration::class, $config);
         $merchantService = new MerchantService($config);
@@ -27,13 +26,12 @@ class MerchantServiceTest extends Setup
 
     public function testCreateOneTimeTicket()
     {
-        $this->markTestSkipped('Bex\exceptions\MerchantServiceException: Merchant login got connection problem.');
         $config = Setup::integrationMerchantConfig();
         $merchantService = new MerchantService($config);
         $merchantResponse = $merchantService->login();
-        $merchantService->oneTimeTicket($merchantResponse->getToken(), '1000', self::INSTALLMENT_URL);
-        var_dump($merchantService->oneTimeTicket($merchantResponse->getToken(), '1000', self::INSTALLMENT_URL));
-        self::assertEquals('ok', $merchantService->oneTimeTicket($merchantResponse->getToken(), '1000', self::INSTALLMENT_URL)->getResult());
+        $merchantService->oneTimeTicket($merchantResponse->getToken(), '1000,54', self::INSTALLMENT_URL);
+
+        self::assertEquals('ok', $merchantService->oneTimeTicket($merchantResponse->getToken(), '1000,54', self::INSTALLMENT_URL)->getResult());
     }
 
     /*
@@ -42,7 +40,7 @@ class MerchantServiceTest extends Setup
         $config = Setup::integrationMerchantConfig();
         $merchantService = new MerchantService($config);
         $merchantResponse = $merchantService->login();
-        $ticketResponse = $merchantService->oneTimeTicket($merchantResponse->getToken(), "1000", self::INSTALLMENT_URL);
+        $ticketResponse = $merchantService->oneTimeTicket($merchantResponse->getToken(), "1000,54", self::INSTALLMENT_URL);
         $ticketId = $ticketResponse->getTicketPath();
         $merchantConnectionId = $merchantResponse->getPath();
         $merchantToken = $merchantResponse->getConnectionToken();

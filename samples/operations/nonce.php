@@ -32,11 +32,13 @@ try {
 
         $table = BexUtil::readJsonFile(DATA_FILE_NAME);
 
-        $orderData = $table[$orderId];
+        $orderData = &$table[$orderId];
         // $orderData["orderId"] == $data["reply"]["orderId"] // ticket oluştururken orderId gönderimi yaparsanız nonce'ta sisteminizdeki orderId ile kontrol sağlayabilirsiniz.
         if ($orderData && $orderData['amount'] == $data['reply']['totalAmount']) {
             $orderData['status'] = 'Approved';
             $orderData['message'] = 'Ödeme onaylandı';
+            Log::debug($data);
+            $orderData['transactionToken'] = $data['id'];
             BexUtil::writeJsonFile(DATA_FILE_NAME, $table);
 
             return true;
