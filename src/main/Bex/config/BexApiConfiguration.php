@@ -40,6 +40,7 @@ class BexApiConfiguration
      * BexApiConfiguration constructor.
      *
      * @param mixed $environment
+     *
      * @throws BexApiConfigurationException
      */
     public function __construct($environment)
@@ -111,6 +112,7 @@ class BexApiConfiguration
 
     /**
      * @param string $baseWsUrl
+     *
      * @return BexApiConfiguration
      */
     public function setBaseWsUrl($baseWsUrl)

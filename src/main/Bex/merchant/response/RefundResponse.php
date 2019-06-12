@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Bex\merchant\response;
-
 
 class RefundResponse
 {
@@ -25,7 +23,7 @@ class RefundResponse
 
     public $authCode;
 
-    public function __construct($code, $uniqueReferans, $posResult,  $orderId)
+    public function __construct($code, $uniqueReferans, $posResult, $orderId)
     {
         $this->code = (int) $code;
         $this->uniqueReferans = $uniqueReferans;
@@ -121,12 +119,11 @@ class RefundResponse
         return $this->postResultMessage;
     }
 
-
     /**
      * @return bool
      */
     public function isSuccess()
     {
-        return $this->getCode() === 0;
+        return 0 === $this->getCode();
     }
 }

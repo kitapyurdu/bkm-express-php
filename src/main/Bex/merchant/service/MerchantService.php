@@ -81,6 +81,7 @@ class MerchantService
     {
         return $this->configuration->getBexApiConfiguration()->getBaseUrl().'merchant/login';
     }
+
     /**
      * @return string
      */

@@ -2,27 +2,27 @@
 
 namespace Bex\merchant\request;
 
-use Bex\merchant\security\EncryptionUtil;
-
 class RefundRequest
 {
     /**
      * doReversalWithNoRef
      * işleminin referans numarası.
+     *
      * @var
      */
     public $uniqueReferans;
 
     /**
      * Firma merchant id’si.
+     *
      * @var
      */
     public $merchantId;
 
     /**
-     * İptal için 1; iade için 2
+     * İptal için 1; iade için 2.
      *
-     * @var integer
+     * @var int
      */
     public $requestType;
 
@@ -42,7 +42,7 @@ class RefundRequest
     public $currency;
 
     /**
-     * POS’a giderken kullanıcı adıdır. kullanılacak
+     * POS’a giderken kullanıcı adıdır. kullanılacak.
      *
      * @var string
      */
@@ -63,13 +63,14 @@ class RefundRequest
     public $transactionToken;
 
     /**
-     * İptal iade işlemlerinde banka bazında gerekli olabilecek parametrelerin iletileceği alan(JSON formatta)
+     * İptal iade işlemlerinde banka bazında gerekli olabilecek parametrelerin iletileceği alan(JSON formatta).
+     *
      * @var string
      */
     public $extra;
 
     /**
-     * yyyyMMdd-hh:mm:ss formatında
+     * yyyyMMdd-hh:mm:ss formatında.
      *
      * @var string
      */
@@ -83,6 +84,7 @@ class RefundRequest
      * dahil etmeyiniz.
      *
      * uniqueReferans , merchantId , requestType , amount , currency , posUid , posPwd , transactionToken, ts
+     *
      * @var string
      */
     public $s;
@@ -97,6 +99,7 @@ class RefundRequest
 
     /**
      * @param mixed $uniqueReferans
+     *
      * @return RefundRequest
      */
     public function setUniqueReferans($uniqueReferans)
@@ -116,6 +119,7 @@ class RefundRequest
 
     /**
      * @param mixed $merchantId
+     *
      * @return RefundRequest
      */
     public function setMerchantId($merchantId)
@@ -135,6 +139,7 @@ class RefundRequest
 
     /**
      * @param int $requestType
+     *
      * @return RefundRequest
      */
     public function setRequestType($requestType)
@@ -154,6 +159,7 @@ class RefundRequest
 
     /**
      * @param string $amount
+     *
      * @return RefundRequest
      */
     public function setAmount($amount)
@@ -173,6 +179,7 @@ class RefundRequest
 
     /**
      * @param mixed $currency
+     *
      * @return RefundRequest
      */
     public function setCurrency($currency)
@@ -192,6 +199,7 @@ class RefundRequest
 
     /**
      * @param string $posUid
+     *
      * @return RefundRequest
      */
     public function setPosUid($posUid)
@@ -211,6 +219,7 @@ class RefundRequest
 
     /**
      * @param string $posPwd
+     *
      * @return RefundRequest
      */
     public function setPosPwd($posPwd)
@@ -230,6 +239,7 @@ class RefundRequest
 
     /**
      * @param string $transactionToken
+     *
      * @return RefundRequest
      */
     public function setTransactionToken($transactionToken)
@@ -249,6 +259,7 @@ class RefundRequest
 
     /**
      * @param string $extra
+     *
      * @return RefundRequest
      */
     public function setExtra($extra)
@@ -268,6 +279,7 @@ class RefundRequest
 
     /**
      * @param string $ts
+     *
      * @return RefundRequest
      */
     public function setTs($ts)
@@ -287,6 +299,7 @@ class RefundRequest
 
     /**
      * @param string $s
+     *
      * @return RefundRequest
      */
     public function setS($s)
@@ -308,6 +321,4 @@ class RefundRequest
 
         return $string;
     }
-
-
 }
