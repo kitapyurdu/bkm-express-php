@@ -9,11 +9,14 @@ use Bex\merchant\request\Builder;
 use Bex\merchant\request\MerchantLoginRequest;
 use Bex\merchant\request\RefundRequest;
 use Bex\merchant\request\TicketRequest;
+use Bex\merchant\request\transactions\TransactionDetailRequest;
+use Bex\merchant\request\transactions\TransactionListRequest;
 use Bex\merchant\response\MerchantLoginResponse;
 use Bex\merchant\response\nonce\MerchantNonceResponse;
 use Bex\merchant\response\nonce\NonceResultResponse;
 use Bex\merchant\response\RefundResponse;
 use Bex\merchant\response\TicketResponse;
+use Bex\merchant\response\TransactionResponse;
 use Bex\merchant\security\EncryptionUtil;
 use Bex\merchant\token\Token;
 use GuzzleHttp\Client;
@@ -85,6 +88,14 @@ class MerchantService
     /**
      * @return string
      */
+    private function getMerchantTransactionListUrl()
+    {
+        return $this->configuration->getBexApiConfiguration()->getBaseUrl().'merchant/merchantTransactionList';
+    }
+
+    /**
+     * @return string
+     */
     private function getRefundRequestUrl()
     {
         return $this->configuration->getBexApiConfiguration()->getBaseWsUrl().'BKMExpressReversalRestService/reversalWithRef.do';
@@ -115,6 +126,102 @@ class MerchantService
 
 //                dd($bodyData);
                 return new RefundResponse($bodyData['result']['code'], $bodyData['uniqueReferans'], $bodyData['posResult'], @$bodyData['posResult']['orderId']);
+            }
+        } catch (GuzzleException $exception) {
+            throw new MerchantServiceException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param TransactionListRequest $transactionListRequest
+     * @param Token                  $token
+     *
+     * @return array|TransactionResponse[]
+     *
+     * @throws EncryptionException
+     * @throws MerchantServiceException
+     */
+    public function transactionList(TransactionListRequest $transactionListRequest, Token $token)
+    {
+        try {
+            $transactionListRequest->signature = (EncryptionUtil::sign($transactionListRequest->id, $this->configuration->getMerchantPrivateKey()));
+            $client = new Client();
+            $res = $client->request('POST', $this->getMerchantTransactionListUrl(), $this->postRequestOptionsWithToken(json_encode($transactionListRequest), $token->getToken()));
+
+            if (200 === $res->getStatusCode()) {
+                $bodyData = json_decode($res->getBody()->getContents(), true)['data'];
+
+                $transactions = $bodyData['merchantTransactions'];
+                $array = [];
+                foreach ($transactions as $transaction) {
+                    $array[] = (new TransactionResponse())
+                        ->setTicket($transaction['ticket'])
+                        ->setOrderId($transaction['orderId'])
+                        ->setAmount($transaction['amount'])
+                        ->setPaymentAmount($transaction['paymentAmount'])
+                        ->setPaymentDate($transaction['paymentDate'])
+                        ->setBankCode($transaction['bankCode'])
+                        ->setVposBankCode($transaction['vposBankCode'])
+                        ->setInstallment($transaction['installment'])
+                        ->setPaymentResult($transaction['paymentResult'])
+                        ->setAuthorizationCode($transaction['authorizationCode'])
+                        ->setPosResponse($transaction['posResponse'])
+                        ->setReferenceNumber($transaction['referenceNumber'])
+                        ->setFailResultCode($transaction['failResultCode'])
+                        ->setIsPreAuth($transaction['isPreAuth'])
+                        ->setTcknHash($transaction['tcknHash'])
+                        ->setFirst6digits($transaction['first6digits'])
+                        ->setLast4digits($transaction['last4digits'])
+                        ;
+                }
+
+                return $array;
+            }
+        } catch (GuzzleException $exception) {
+            throw new MerchantServiceException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param TransactionDetailRequest $transactionDetailRequest
+     * @param Token                    $token
+     *
+     * @return TransactionResponse
+     *
+     * @throws EncryptionException
+     * @throws MerchantServiceException
+     */
+    public function transactionDetail(TransactionDetailRequest $transactionDetailRequest, Token $token)
+    {
+        try {
+            $transactionDetailRequest->signature = (EncryptionUtil::sign($transactionDetailRequest->id, $this->configuration->getMerchantPrivateKey()));
+            $client = new Client();
+            $res = $client->request('POST', $this->getMerchantTransactionListUrl(), $this->postRequestOptionsWithToken(json_encode($transactionDetailRequest), $token->getToken()));
+
+            if (200 === $res->getStatusCode()) {
+                $bodyData = json_decode($res->getBody()->getContents(), true)['data'];
+
+                $transaction = $bodyData['merchantTransactions'][0];
+
+                return (new TransactionResponse())
+                    ->setTicket($transaction['ticket'])
+                    ->setOrderId($transaction['orderId'])
+                    ->setAmount($transaction['amount'])
+                    ->setPaymentAmount($transaction['paymentAmount'])
+                    ->setPaymentDate($transaction['paymentDate'])
+                    ->setBankCode($transaction['bankCode'])
+                    ->setVposBankCode($transaction['vposBankCode'])
+                    ->setInstallment($transaction['installment'])
+                    ->setPaymentResult($transaction['paymentResult'])
+                    ->setAuthorizationCode($transaction['authorizationCode'])
+                    ->setPosResponse($transaction['posResponse'])
+                    ->setReferenceNumber($transaction['referenceNumber'])
+                    ->setFailResultCode($transaction['failResultCode'])
+                    ->setIsPreAuth($transaction['isPreAuth'])
+                    ->setTcknHash($transaction['tcknHash'])
+                    ->setFirst6digits($transaction['first6digits'])
+                    ->setLast4digits($transaction['last4digits'])
+                    ;
             }
         } catch (GuzzleException $exception) {
             throw new MerchantServiceException($exception->getMessage());

@@ -120,7 +120,41 @@
             }, "bex-payment-modal", false);
         }
 
+        function getTransactionList() {
+            BexUtil
+                .queryTicket("/samples/operations/transactions.php", {})
+                .then(function (response) {
+                    data = response.response;
 
+                    var html = '';
+                    for (var i in data) {
+                        html += '' +
+                            '<tr>' +
+                            '<td><a href="javascript:;" onclick="getTicketDetail(\''+data[i].orderId+'\', \''+data[i].ticket+'\')">'+data[i].orderId+'</a></td>' +
+                            '<td>'+data[i].ticket+'</td>' +
+                            '<td>'+data[i].amount+'</td>' +
+                            '<td>'+data[i].bankCode+'</td>' +
+                            '<td>'+data[i].vposBankCode+'</td>' +
+                            '<td>'+data[i].paymentDate.date+'</td>' +
+                            '</tr>';
+                    }
+
+
+
+                    $("#transaction_list_tbody").html(html);
+                });
+        }
+
+        function getTicketDetail(orderId, ticket)
+        {
+            BexUtil
+                .queryTicket("/samples/operations/transactions.php?orderId="+orderId+"&ticket="+ticket, {})
+                .then(function (response) {
+                    data = response.response;
+
+                    alert(JSON.stringify(data));
+                });
+        }
     </script>
 </head>
 <body>
@@ -168,6 +202,29 @@
                     <button class="btn btn-primary" onclick="openPaymentButtonWithAddress()">BKM Button Kullanarak Ödeme
                         Al
                     </button>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <a href="#" data-toggle="collapse" data-target="#transaction_list"><h4>Transaction Listesi</h4></a>
+            <br/>
+            <div class="collapse panel panel-default" id="transaction_list">
+                <div class="panel-body">
+                    <button class="btn btn-primary" onclick="getTransactionList()">Listeyi Getir</button>
+
+                    <table class="table">
+                        <thead>
+                            <th>TicketId</th>
+                            <th>OrderId</th>
+                            <th>Amount</th>
+                            <th>Bank Code</th>
+                            <th>Vpos Bank Code</th>
+                            <th>Date</th>
+                        </thead>
+                        <tbody id="transaction_list_tbody">
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </li>

@@ -211,6 +211,29 @@ class Bex
         return $this->merchantService->refund($refundRequest, $this->merchantLoginResponse->getToken());
     }
 
+    public function transactionList()
+    {
+        $transactionListRequest = new \Bex\merchant\request\transactions\TransactionListRequest(
+            MERCHANT_ID,
+            (new \DateTime('-1 week'))->format('Y-m-d H:i'),
+            (new \DateTime())->format('Y-m-d H:i')
+        );
+
+        $this->login();
+        return $this->merchantService->transactionList($transactionListRequest, $this->merchantLoginResponse->getToken());
+    }
+    public function transactionDetail($orderId, $ticket)
+    {
+        $transactionDetailRequest = new \Bex\merchant\request\transactions\TransactionDetailRequest(
+            MERCHANT_ID,
+            $ticket,
+            $orderId
+        );
+
+        $this->login();
+        return $this->merchantService->transactionDetail($transactionDetailRequest, $this->merchantLoginResponse->getToken());
+    }
+
     public function approve(callable $callback)
     {
         //NULL CHECK
