@@ -3,14 +3,20 @@
 namespace Bex\merchant\service;
 
 use Bex\config\Configuration;
+use Bex\exceptions\EncryptionException;
 use Bex\exceptions\MerchantServiceException;
 use Bex\merchant\request\Builder;
 use Bex\merchant\request\MerchantLoginRequest;
+use Bex\merchant\request\RefundRequest;
 use Bex\merchant\request\TicketRequest;
+use Bex\merchant\request\transactions\TransactionDetailRequest;
+use Bex\merchant\request\transactions\TransactionListRequest;
 use Bex\merchant\response\MerchantLoginResponse;
 use Bex\merchant\response\nonce\MerchantNonceResponse;
 use Bex\merchant\response\nonce\NonceResultResponse;
+use Bex\merchant\response\RefundResponse;
 use Bex\merchant\response\TicketResponse;
+use Bex\merchant\response\TransactionResponse;
 use Bex\merchant\security\EncryptionUtil;
 use Bex\merchant\token\Token;
 use GuzzleHttp\Client;
@@ -34,8 +40,8 @@ class MerchantService
      * @return MerchantLoginResponse
      *
      * @throws MerchantServiceException
-     * @throws \Bex\exceptions\EncryptionException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws EncryptionException
+     * @throws GuzzleException
      */
     public function login()
     {
@@ -63,7 +69,7 @@ class MerchantService
      *
      * @return array
      */
-    public function encodeMerchantLoginRequestObject($id, $sign)
+    private function encodeMerchantLoginRequestObject($id, $sign)
     {
         return json_encode([
             'id' => $id,
@@ -74,9 +80,25 @@ class MerchantService
     /**
      * @return string
      */
-    public function getMerchantLoginUrl()
+    private function getMerchantLoginUrl()
     {
         return $this->configuration->getBexApiConfiguration()->getBaseUrl().'merchant/login';
+    }
+
+    /**
+     * @return string
+     */
+    private function getMerchantTransactionListUrl()
+    {
+        return $this->configuration->getBexApiConfiguration()->getBaseUrl().'merchant/merchantTransactionList';
+    }
+
+    /**
+     * @return string
+     */
+    private function getRefundRequestUrl()
+    {
+        return $this->configuration->getBexApiConfiguration()->getBaseWsUrl().'BKMExpressReversalRestService/reversalWithRef.do';
     }
 
     /**
@@ -84,13 +106,126 @@ class MerchantService
      *
      * @return array
      */
-    public function postRequestOptionsWithoutToken($requestBody)
+    private function postRequestOptionsWithoutToken($requestBody)
     {
         return [
             'headers' => ['Content-Type' => 'application/json'],
             'curl' => [CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2],
             'body' => $requestBody,
         ];
+    }
+
+    public function refund(RefundRequest $refundRequest, Token $token)
+    {
+        try {
+            $refundRequest->setS(EncryptionUtil::sign($refundRequest->getSignString(), $this->configuration->getMerchantPrivateKey()));
+            $client = new Client();
+            $res = $client->request('POST', $this->getRefundRequestUrl(), $this->postRequestOptionsWithToken(json_encode($refundRequest), $token->getToken()));
+            if (200 === $res->getStatusCode()) {
+                $bodyData = json_decode($res->getBody()->getContents(), true);
+
+//                dd($bodyData);
+                return new RefundResponse($bodyData['result']['code'], $bodyData['uniqueReferans'], $bodyData['posResult'], @$bodyData['posResult']['orderId']);
+            }
+        } catch (GuzzleException $exception) {
+            throw new MerchantServiceException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param TransactionListRequest $transactionListRequest
+     * @param Token                  $token
+     *
+     * @return array|TransactionResponse[]
+     *
+     * @throws EncryptionException
+     * @throws MerchantServiceException
+     */
+    public function transactionList(TransactionListRequest $transactionListRequest, Token $token)
+    {
+        try {
+            $transactionListRequest->signature = (EncryptionUtil::sign($transactionListRequest->id, $this->configuration->getMerchantPrivateKey()));
+            $client = new Client();
+            $res = $client->request('POST', $this->getMerchantTransactionListUrl(), $this->postRequestOptionsWithToken(json_encode($transactionListRequest), $token->getToken()));
+
+            if (200 === $res->getStatusCode()) {
+                $bodyData = json_decode($res->getBody()->getContents(), true)['data'];
+
+                $transactions = $bodyData['merchantTransactions'];
+                $array = [];
+                foreach ($transactions as $transaction) {
+                    $array[] = (new TransactionResponse())
+                        ->setTicket($transaction['ticket'])
+                        ->setOrderId($transaction['orderId'])
+                        ->setAmount($transaction['amount'])
+                        ->setPaymentAmount($transaction['paymentAmount'])
+                        ->setPaymentDate($transaction['paymentDate'])
+                        ->setBankCode($transaction['bankCode'])
+                        ->setVposBankCode($transaction['vposBankCode'])
+                        ->setInstallment($transaction['installment'])
+                        ->setPaymentResult($transaction['paymentResult'])
+                        ->setAuthorizationCode($transaction['authorizationCode'])
+                        ->setPosResponse($transaction['posResponse'])
+                        ->setReferenceNumber($transaction['referenceNumber'])
+                        ->setFailResultCode($transaction['failResultCode'])
+                        ->setIsPreAuth($transaction['isPreAuth'])
+                        ->setTcknHash($transaction['tcknHash'])
+                        ->setFirst6digits($transaction['first6digits'])
+                        ->setLast4digits($transaction['last4digits'])
+                        ;
+                }
+
+                return $array;
+            }
+        } catch (GuzzleException $exception) {
+            throw new MerchantServiceException($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param TransactionDetailRequest $transactionDetailRequest
+     * @param Token                    $token
+     *
+     * @return TransactionResponse
+     *
+     * @throws EncryptionException
+     * @throws MerchantServiceException
+     */
+    public function transactionDetail(TransactionDetailRequest $transactionDetailRequest, Token $token)
+    {
+        try {
+            $transactionDetailRequest->signature = (EncryptionUtil::sign($transactionDetailRequest->id, $this->configuration->getMerchantPrivateKey()));
+            $client = new Client();
+            $res = $client->request('POST', $this->getMerchantTransactionListUrl(), $this->postRequestOptionsWithToken(json_encode($transactionDetailRequest), $token->getToken()));
+
+            if (200 === $res->getStatusCode()) {
+                $bodyData = json_decode($res->getBody()->getContents(), true)['data'];
+
+                $transaction = $bodyData['merchantTransactions'][0];
+
+                return (new TransactionResponse())
+                    ->setTicket($transaction['ticket'])
+                    ->setOrderId($transaction['orderId'])
+                    ->setAmount($transaction['amount'])
+                    ->setPaymentAmount($transaction['paymentAmount'])
+                    ->setPaymentDate($transaction['paymentDate'])
+                    ->setBankCode($transaction['bankCode'])
+                    ->setVposBankCode($transaction['vposBankCode'])
+                    ->setInstallment($transaction['installment'])
+                    ->setPaymentResult($transaction['paymentResult'])
+                    ->setAuthorizationCode($transaction['authorizationCode'])
+                    ->setPosResponse($transaction['posResponse'])
+                    ->setReferenceNumber($transaction['referenceNumber'])
+                    ->setFailResultCode($transaction['failResultCode'])
+                    ->setIsPreAuth($transaction['isPreAuth'])
+                    ->setTcknHash($transaction['tcknHash'])
+                    ->setFirst6digits($transaction['first6digits'])
+                    ->setLast4digits($transaction['last4digits'])
+                    ;
+            }
+        } catch (GuzzleException $exception) {
+            throw new MerchantServiceException($exception->getMessage());
+        }
     }
 
     /**
@@ -101,7 +236,7 @@ class MerchantService
      * @return TicketResponse
      *
      * @throws MerchantServiceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function oneTimeTicket(Token $connection, $amount, $installmentUrl)
     {
@@ -120,9 +255,9 @@ class MerchantService
      * @return TicketResponse
      *
      * @throws MerchantServiceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
-    public function createOneTimeTicket($requestBody, Token $token)
+    private function createOneTimeTicket($requestBody, Token $token)
     {
         $requestBody = $this->encodeTicketRequestObjectToJson($requestBody);
         try {
@@ -143,7 +278,7 @@ class MerchantService
      *
      * @return string
      */
-    public function encodeTicketRequestObjectToJson(TicketRequest $ticketRequest)
+    private function encodeTicketRequestObjectToJson(TicketRequest $ticketRequest)
     {
         $amount = null != $ticketRequest->getAmount() ? $ticketRequest->getAmount() : '';
         $nonceUrl = null != $ticketRequest->getNonceUrl() ? $ticketRequest->getNonceUrl() : '';
@@ -188,7 +323,7 @@ class MerchantService
      *
      * @return string
      */
-    public function getMerchantCreateTicketUrl($merchantPath)
+    private function getMerchantCreateTicketUrl($merchantPath)
     {
         return $this->configuration->getBexApiConfiguration()->getBaseUrl().'merchant/'.$merchantPath.'/ticket?type=payment';
     }
@@ -199,7 +334,7 @@ class MerchantService
      *
      * @return array
      */
-    public function postRequestOptionsWithToken($requestBody, $token)
+    private function postRequestOptionsWithToken($requestBody, $token)
     {
         return [
             'headers' => ['Content-Type' => 'application/json', 'Bex-Connection' => $token],
@@ -217,7 +352,7 @@ class MerchantService
      * @return TicketResponse
      *
      * @throws MerchantServiceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function oneTimeTicketWithNonce(Token $connection, $amount, $installmentUrl, $nonceUrl)
     {
@@ -237,7 +372,7 @@ class MerchantService
      * @return TicketResponse
      *
      * @throws MerchantServiceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function oneTimeTicketWithoutInstallmentUrl(Token $connection, $amount)
     {
@@ -257,7 +392,7 @@ class MerchantService
      * @return TicketResponse
      *
      * @throws MerchantServiceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function oneTimeTicketWithoutInstallmentUrlWithNonce(Token $connection, $amount, $nonceUrl)
     {
@@ -276,7 +411,7 @@ class MerchantService
      * @return TicketResponse
      *
      * @throws MerchantServiceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function oneTimeTicketWithBuilder(Token $connection, Builder $builder)
     {
@@ -308,7 +443,7 @@ class MerchantService
      * @return NonceResultResponse
      *
      * @throws MerchantServiceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function sendNonceResponse(MerchantNonceResponse $response, $connectionId, $ticketId, $connectionToken, $nonceToken)
     {
@@ -325,7 +460,7 @@ class MerchantService
      * @return NonceResultResponse
      *
      * @throws MerchantServiceException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function nonce(MerchantNonceResponse $requestBody, $connectionId, $ticketId, $connectionToken, $nonceToken)
     {
@@ -371,7 +506,7 @@ class MerchantService
      *
      * @return string
      */
-    public function encodeMerchantNonceRequestObjectToJson(MerchantNonceResponse $merchantNonceResponse)
+    private function encodeMerchantNonceRequestObjectToJson(MerchantNonceResponse $merchantNonceResponse)
     {
         return json_encode([
             'result' => $merchantNonceResponse->getResult(),
@@ -387,7 +522,7 @@ class MerchantService
      *
      * @return string
      */
-    public function getMerchantNonceUrl($connectionId, $ticketId)
+    private function getMerchantNonceUrl($connectionId, $ticketId)
     {
         return $this->configuration->getBexApiConfiguration()->getBaseUrl().'merchant/'.$connectionId.'/ticket/'.$ticketId.'/operate?name=commit';
     }
@@ -399,7 +534,7 @@ class MerchantService
      *
      * @return array
      */
-    public function postRequestOptionsWithNonceTokenAndToken($requestBody, $connectionToken, $nonceToken)
+    private function postRequestOptionsWithNonceTokenAndToken($requestBody, $connectionToken, $nonceToken)
     {
         return [
             'headers' => ['Content-Type' => 'application/json', 'Bex-Connection' => $connectionToken, 'Bex-Nonce' => $nonceToken],

@@ -85,15 +85,13 @@ class Bex
     }
 
     /**
-     * {.
-     *
-     * }
-     *
      * @param $ticketArray
      *
      * @return array
      *
-     * @throws Exception
+     * @throws BexException
+     * @throws \Bex\exceptions\MerchantServiceException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function createTicket($ticketArray)
     {
@@ -123,11 +121,11 @@ class Bex
             $builder
         );
 
-        return array(
+        return [
             'id' => $ticketResponse->getTicketShortId(),
             'path' => $ticketResponse->getTicketPath(),
             'token' => $ticketResponse->getTicketToken(),
-        );
+        ];
     }
 
     private function login()
@@ -189,6 +187,51 @@ class Bex
         } catch (\Exception $exception) {
             exit(json_encode(array('data' => null, 'status' => 'fail', 'error' => $exception->getMessage())));
         }
+    }
+
+    /**
+     * @param $orderData
+     * @return \Bex\merchant\response\RefundResponse
+     * @throws BexException
+     * @throws \Bex\exceptions\MerchantServiceException
+     */
+    public function refund($orderData)
+    {
+        $refundRequest = (new \Bex\merchant\request\RefundRequest())
+            ->setUniqueReferans($orderData['orderId']) //random?
+            ->setAmount($orderData['amount'])
+            ->setTransactionToken($orderData['transactionToken'])
+            ->setMerchantId(MERCHANT_ID)
+            ->setRequestType(1)
+            ->setCurrency(949)
+            ->setTs(date('ymd-h:i:s'))
+        ;
+
+        $this->login();
+        return $this->merchantService->refund($refundRequest, $this->merchantLoginResponse->getToken());
+    }
+
+    public function transactionList()
+    {
+        $transactionListRequest = new \Bex\merchant\request\transactions\TransactionListRequest(
+            MERCHANT_ID,
+            (new \DateTime('-1 week'))->format('Y-m-d H:i'),
+            (new \DateTime())->format('Y-m-d H:i')
+        );
+
+        $this->login();
+        return $this->merchantService->transactionList($transactionListRequest, $this->merchantLoginResponse->getToken());
+    }
+    public function transactionDetail($orderId, $ticket)
+    {
+        $transactionDetailRequest = new \Bex\merchant\request\transactions\TransactionDetailRequest(
+            MERCHANT_ID,
+            $ticket,
+            $orderId
+        );
+
+        $this->login();
+        return $this->merchantService->transactionDetail($transactionDetailRequest, $this->merchantLoginResponse->getToken());
     }
 
     public function approve(callable $callback)

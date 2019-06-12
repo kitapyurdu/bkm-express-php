@@ -37,13 +37,10 @@ class NonceRequest
         $this->approver = $approver;
         $this->token = $token;
         $this->signature = $signature;
-        $this->reply = $reply;
         $this->reply = new NonceData($reply);
         $this->hash = $hash;
         $this->tcknMath = $tcknMatch;
         $this->msisdnMatch = $msisdnMatch;
-
-        return $this;
     }
 
     /**
