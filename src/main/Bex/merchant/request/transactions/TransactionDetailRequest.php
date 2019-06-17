@@ -16,6 +16,6 @@ class TransactionDetailRequest
     {
         $this->id = $id;
         $this->ticketId = $ticketId;
-        $this->orderId = $orderId;
+        $this->orderId = (string) $orderId;
     }
 }
