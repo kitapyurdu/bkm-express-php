@@ -79,7 +79,7 @@ class RefundResponse
      */
     public function getPosResult()
     {
-        return $this->PosResult;
+        return $this->posResult;
     }
 
     /**
@@ -96,30 +96,6 @@ class RefundResponse
     public function getAuthCode()
     {
         return $this->authCode;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPosResponse()
-    {
-        return $this->posResponse;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPosResultCode()
-    {
-        return $this->posResultCode;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPostResultMessage()
-    {
-        return $this->postResultMessage;
     }
 
     /**
