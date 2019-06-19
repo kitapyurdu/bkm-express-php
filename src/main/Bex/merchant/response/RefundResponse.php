@@ -12,6 +12,8 @@ class RefundResponse
 
     public $code;
 
+    public $codeMsg;
+
     public $message;
 
     /**
@@ -26,6 +28,7 @@ class RefundResponse
     public function __construct($code, $uniqueReferans, $posResult, $orderId)
     {
         $this->code = (int) $code;
+        $this->setCodeMsgByCode($this->code);
         $this->uniqueReferans = $uniqueReferans;
         $this->orderId = $orderId;
         $this->posResult = (array) $posResult;
@@ -76,7 +79,7 @@ class RefundResponse
      */
     public function getPosResult()
     {
-        return $this->PosResult;
+        return $this->posResult;
     }
 
     /**
@@ -96,34 +99,43 @@ class RefundResponse
     }
 
     /**
-     * @return mixed
-     */
-    public function getPosResponse()
-    {
-        return $this->posResponse;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPosResultCode()
-    {
-        return $this->posResultCode;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPostResultMessage()
-    {
-        return $this->postResultMessage;
-    }
-
-    /**
      * @return bool
      */
     public function isSuccess()
     {
         return 0 === $this->getCode();
+    }
+
+    /**
+     * @param int $code
+     * @return string
+     */
+    private function setCodeMsgByCode($code)
+    {
+        switch ($code) {
+            case 0:
+                return 'Success';
+            case 1:
+                return 'System Error';
+            case 2:
+                return 'Invalid Input Parameters';
+            case 3:
+                return 'Time Synchronization Error';
+            case 4:
+                return 'MAC verification Failed';
+            case 5:
+                return 'Undefined merchant id';
+            case 6:
+                return 'NonUnique Reference Id';
+            case 7:
+                return 'Virtual Pos Error';
+            case 8:
+                return 'Invalid Acquirer Bank ID';
+            case 9:
+                return 'Invalid Transaction Token';
+            default:
+                return 'Unknown';
+        }
+
     }
 }
