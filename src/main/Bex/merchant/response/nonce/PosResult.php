@@ -32,12 +32,13 @@ class PosResult
     public function __construct($posResult)
     {
         $this->orderId = $posResult['orderId'];
-        $this->authCode = $posResult['authCode'];
-        $this->posResponse = $posResult['posResponse'];
-        $this->posResultCode = $posResult['posResultCode'];
-        $this->referenceNumber = $posResult['referenceNumber'];
-        $this->posTransactionId = $posResult['posTransactionId'];
-        $this->posBank = $posResult['posBank'];
+        $this->authCode = isset($posResult['authCode']) ? $posResult['authCode'] : null;
+        $this->posResponse = isset($posResult['posResponse']) ? $posResult['posResponse'] : null;
+        $this->posResultCode = isset($posResult['posResultCode']) ? $posResult['posResultCode'] : null;
+        $this->referenceNumber = isset($posResult['referenceNumber']) ? $posResult['referenceNumber'] : null;
+        $this->posTransactionId = isset($posResult['posTransactionId']) ? $posResult['posTransactionId'] : null;
+        $this->posBank = isset($posResult['posBank']) ? $posResult['posBank'] : null;
+        $this->posResultMessage = isset($posResult['posResultMessage']) ? $posResult['posResultMessage'] : null;
     }
 
     /**
