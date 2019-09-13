@@ -278,7 +278,7 @@ class NonceResultResponse
     }
 
     /**
-     * @return mixed
+     * @return PosResult
      */
     public function getPosResult()
     {
