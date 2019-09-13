@@ -17,17 +17,12 @@ class PosResult
     private $referenceNumber;
     private $posTransactionId;
     private $posBank;
+    private $posResultMessage;
 
     /**
      * PosResult constructor.
      *
-     * @param $orderId
-     * @param $authCode
-     * @param $posResponse
-     * @param $posResultCode
-     * @param $referenceNumber
-     * @param $posTransactionId
-     * @param $posBank
+     * @param $posResult
      */
     public function __construct($posResult)
     {
@@ -152,4 +147,13 @@ class PosResult
     {
         $this->posBank = $posBank;
     }
+
+    /**
+     * @return mixed|null
+     */
+    public function getPosResultMessage()
+    {
+        return $this->posResultMessage;
+    }
+
 }
